@@ -4,8 +4,8 @@ import { getSnippets } from "../services/api";
 import { useImmerReducer } from "use-immer";
 
 export enum SnippetActionType {
-  FETCH_TICKET = "FETCH_TICKET",
-  TICKET_MOVED_TO_NEW_LANE = "TICKET_MOVED_TO_NEW_LANE",
+  FETCH_SNIPPET = "FETCH_SNIPPET",
+  MOVE_SNIPPET = "MOVE_SNIPPET",
   ERROR = "ERROR",
 }
 
@@ -15,8 +15,10 @@ type Props = {
 
 export type SnippetState = {
   snippets: ISnippet[];
+  moveableSnippets: ISnippet[];
   error: Error | null;
   loading: boolean;
+  draft: ISnippet[];
 };
 
 type SnippetMovedPayload = { newLane: LaneType; snippetId: string };
@@ -26,16 +28,24 @@ export type SnippetAction = {
   payload?: ISnippet[] | ISnippet | Error | SnippetMovedPayload;
 };
 
-const initialState: SnippetState = { snippets: [], error: null, loading: true };
+const initialState: SnippetState = {
+  snippets: [],
+  moveableSnippets: [],
+  error: null,
+  loading: true,
+  draft: [],
+};
 const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
+  console.log(`Received action:`, action.type);
   switch (action.type) {
-    case SnippetActionType.FETCH_TICKET:
+    case SnippetActionType.FETCH_SNIPPET:
       draft.snippets = action.payload as ISnippet[];
+      draft.moveableSnippets = [...draft.snippets];
       draft.loading = false;
       return draft;
-    case SnippetActionType.TICKET_MOVED_TO_NEW_LANE:
+    case SnippetActionType.MOVE_SNIPPET:
       const { snippetId, newLane } = action.payload as SnippetMovedPayload;
-      for (const snippet of draft.snippets) {
+      for (const snippet of draft.moveableSnippets) {
         if (snippet.id === snippetId) {
           snippet.lane = newLane;
           break;
@@ -66,7 +76,7 @@ export const SnippetContextProvider: FC<Props> = ({ children }) => {
   useEffect(() => {
     getSnippets()
       .then((snippets) =>
-        dispatch({ type: SnippetActionType.FETCH_TICKET, payload: snippets })
+        dispatch({ type: SnippetActionType.FETCH_SNIPPET, payload: snippets })
       )
       .catch((error) =>
         dispatch({ type: SnippetActionType.ERROR, payload: error })

@@ -1,7 +1,12 @@
 import React, { DragEventHandler } from "react";
 import styled from "styled-components";
 import { Snippet } from "../Snippet/Snippet";
-import { LaneType, OnSnippetDragHandler, ISnippet } from "../../types";
+import {
+  LaneType,
+  OnSnippetDraggedHandler,
+  ISnippet,
+  OnSnippetClickedHandler,
+} from "../../types";
 import { theme } from "../../theme/theme";
 
 const LaneWrapper = styled.div`
@@ -36,20 +41,22 @@ const SnippetsContainer = styled.div``;
 
 interface LaneProps {
   title: LaneType;
-  snippets: ISnippet[];
+  moveableSnippets: ISnippet[];
   loading: boolean;
   onDragOver: DragEventHandler;
   onDrop: DragEventHandler;
-  onDragStart: OnSnippetDragHandler;
+  onDragStart: OnSnippetDraggedHandler;
+  onSnippetClicked: OnSnippetClickedHandler;
 }
 
 export const Lane = ({
   title,
-  snippets,
+  moveableSnippets,
   loading,
   onDragStart,
   onDrop,
   onDragOver,
+  onSnippetClicked,
 }: LaneProps) => {
   return (
     <LaneWrapper onDragOver={onDragOver} onDrop={onDrop}>
@@ -57,12 +64,13 @@ export const Lane = ({
       <SnippetsContainer>
         {loading
           ? "Fetching Snippets"
-          : snippets.map((snippet) => (
+          : moveableSnippets.map((snippet) => (
               <Snippet
-                key={snippet.title}
+                key={snippet.id}
                 {...snippet}
                 draggable={true}
                 onDragStart={onDragStart}
+                onClick={onSnippetClicked}
               />
             ))}
       </SnippetsContainer>

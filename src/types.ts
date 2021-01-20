@@ -8,7 +8,7 @@ export type ISnippet = {
   title: string;
   body: string;
   lane: LaneType;
-  tag?: string[];
+  tags?: string[];
 };
 
 export type LaneConfig = {
@@ -16,7 +16,9 @@ export type LaneConfig = {
   title: LaneType;
 };
 
-export type OnSnippetDragHandler = (
+export type OnSnippetDraggedHandler = (
   event: React.DragEvent<HTMLDivElement>,
   id: string
 ) => void;
+
+export type OnSnippetClickedHandler = (id: string) => void;

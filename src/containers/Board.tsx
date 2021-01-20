@@ -1,7 +1,12 @@
-import React, { DragEventHandler } from "react";
+import React, { DragEventHandler, MouseEventHandler } from "react";
 import styled from "styled-components";
 import { Lane } from "../components/Lane/Lane";
-import { LaneConfig, LaneType, OnSnippetDragHandler } from "../types";
+import {
+  LaneConfig,
+  LaneType,
+  OnSnippetDraggedHandler,
+  OnSnippetClickedHandler,
+} from "../types";
 import {
   SnippetAction,
   SnippetState,
@@ -31,7 +36,7 @@ interface BoardProps extends SnippetState {
 export const Board = ({
   lanes,
   error,
-  snippets,
+  moveableSnippets,
   loading,
   snippetDispatch,
 }: BoardProps) => {
@@ -41,11 +46,11 @@ export const Board = ({
     }
   };
   // factoryFunction for onDrop since it needs the title of the target lane
-  const createOnDrop = (title: LaneType): DragEventHandler => {
+  const createOnSnippetDroppedHandler = (title: LaneType): DragEventHandler => {
     return (event) => {
       const droppedSnippetId = event.dataTransfer.getData("id");
       snippetDispatch({
-        type: SnippetActionType.TICKET_MOVED_TO_NEW_LANE,
+        type: SnippetActionType.MOVE_SNIPPET,
         payload: {
           snippetId: droppedSnippetId,
           newLane: title,
@@ -54,7 +59,21 @@ export const Board = ({
     };
   };
 
-  const onDragStart: OnSnippetDragHandler = (event, id) => {
+  const createOnSnippetClickedHandler = (
+    title: LaneType
+  ): OnSnippetClickedHandler => {
+    return (id) => {
+      snippetDispatch({
+        type: SnippetActionType.MOVE_SNIPPET,
+        payload: {
+          snippetId: id,
+          newLane: title === LaneType.Draft ? LaneType.Snippet : LaneType.Draft,
+        },
+      });
+    };
+  };
+
+  const onDragStart: OnSnippetDraggedHandler = (event, id) => {
     // text/plain is treated like a link
     event.dataTransfer.setData("id", id);
   };
@@ -66,13 +85,14 @@ export const Board = ({
       ) : (
         lanes.map(({ id, title }) => (
           <Lane
-            snippets={snippets.filter((t) => t.lane === title)}
+            moveableSnippets={moveableSnippets.filter((t) => t.lane === title)}
             key={id}
             title={title}
             loading={loading}
             onDragStart={onDragStart}
             onDragOver={onDragOver}
-            onDrop={createOnDrop(title)}
+            onDrop={createOnSnippetDroppedHandler(title)}
+            onSnippetClicked={createOnSnippetClickedHandler(title)}
           />
         ))
       )}

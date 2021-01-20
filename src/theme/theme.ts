@@ -18,8 +18,9 @@ export const theme = {
   text: {
     fontSize: {
       xs: `${baseFontSize / 4}rem`,
-      s: `${baseFontSize / 2}rem`,
-      m: `${(baseFontSize * 3) / 4}rem`,
+      ss: `${baseFontSize / 2}rem`,
+      s: `${(baseFontSize * 3) / 4}rem`,
+      m: `${baseFontSize}rem`,
       xm: `${baseFontSize * 1.25}rem`,
       l: `${baseFontSize * 1.5}rem`,
       xl: `${baseFontSize * 25}rem`,
