@@ -1,15 +1,14 @@
 export enum LaneType {
-  TODO = "To Do",
-  IN_PROGRES = "In Progress",
-  REVIEW = "Review",
-  DONE = "Done",
+  Snippet = "Snippet",
+  Draft = "Draft",
 }
 
-export type SingleTicket = {
+export type ISnippet = {
   id: string;
   title: string;
   body: string;
   lane: LaneType;
+  tag?: string[];
 };
 
 export type LaneConfig = {
@@ -17,7 +16,7 @@ export type LaneConfig = {
   title: LaneType;
 };
 
-export type OnTicketDragHandler = (
+export type OnSnippetDragHandler = (
   event: React.DragEvent<HTMLDivElement>,
   id: string
 ) => void;

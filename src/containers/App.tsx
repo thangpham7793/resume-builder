@@ -2,13 +2,12 @@ import React from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { Header } from "../components/Header/Header";
 import {
-  TicketContextProvider,
-  useTicketContext,
-  useTicketContextDispatch,
-} from "../contexts/TicketContextProvider";
+  useSnippetContext,
+  useSnippetContextDispatch,
+} from "../contexts/SnippetContextProvider";
+import { theme } from "../theme/theme";
 import { LaneType } from "../types";
 import { Board } from "./Board";
-import { TicketsContainer } from "./TicketsContainer";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -19,6 +18,7 @@ const GlobalStyle = createGlobalStyle`
     sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-size: ${theme.text.fontSize.m}
   }
 `;
 
@@ -28,14 +28,12 @@ const AppWrapper = styled.div`
 
 function App() {
   const lanes = [
-    { id: 1, title: LaneType.TODO },
-    { id: 2, title: LaneType.IN_PROGRES },
-    { id: 3, title: LaneType.REVIEW },
-    { id: 4, title: LaneType.DONE },
+    { id: 1, title: LaneType.Snippet },
+    { id: 2, title: LaneType.Draft },
   ];
 
-  const ticketsContext = useTicketContext();
-  const ticketDispatch = useTicketContextDispatch();
+  const snippetsContext = useSnippetContext();
+  const snippetDispatch = useSnippetContextDispatch();
 
   return (
     <>
@@ -44,10 +42,9 @@ function App() {
         <Header />
         <Board
           lanes={lanes}
-          ticketDispatch={ticketDispatch}
-          {...ticketsContext}
+          snippetDispatch={snippetDispatch}
+          {...snippetsContext}
         />
-        <TicketsContainer {...ticketsContext} />
       </AppWrapper>
     </>
   );

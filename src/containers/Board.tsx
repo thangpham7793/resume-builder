@@ -1,12 +1,12 @@
 import React, { DragEventHandler } from "react";
 import styled from "styled-components";
 import { Lane } from "../components/Lane/Lane";
-import { LaneConfig, LaneType, OnTicketDragHandler } from "../types";
+import { LaneConfig, LaneType, OnSnippetDragHandler } from "../types";
 import {
-  TicketAction,
-  TicketState,
-  TicketActionType,
-} from "../contexts/TicketContextProvider";
+  SnippetAction,
+  SnippetState,
+  SnippetActionType,
+} from "../contexts/SnippetContextProvider";
 
 const BoardWrapper = styled.div`
   justify-content: space-around;
@@ -23,17 +23,17 @@ const Alert = styled.div`
   text-align: center;
 `;
 
-interface BoardProps extends TicketState {
+interface BoardProps extends SnippetState {
   lanes: LaneConfig[];
-  ticketDispatch: React.Dispatch<TicketAction>;
+  snippetDispatch: React.Dispatch<SnippetAction>;
 }
 
 export const Board = ({
   lanes,
   error,
-  tickets,
+  snippets,
   loading,
-  ticketDispatch,
+  snippetDispatch,
 }: BoardProps) => {
   const onDragOver: DragEventHandler = (event) => {
     if (event.dataTransfer.types.includes("id")) {
@@ -43,18 +43,18 @@ export const Board = ({
   // factoryFunction for onDrop since it needs the title of the target lane
   const createOnDrop = (title: LaneType): DragEventHandler => {
     return (event) => {
-      const droppedTicketId = event.dataTransfer.getData("id");
-      ticketDispatch({
-        type: TicketActionType.TICKET_MOVED_TO_NEW_LANE,
+      const droppedSnippetId = event.dataTransfer.getData("id");
+      snippetDispatch({
+        type: SnippetActionType.TICKET_MOVED_TO_NEW_LANE,
         payload: {
-          ticketId: droppedTicketId,
+          snippetId: droppedSnippetId,
           newLane: title,
         },
       });
     };
   };
 
-  const onDragStart: OnTicketDragHandler = (event, id) => {
+  const onDragStart: OnSnippetDragHandler = (event, id) => {
     // text/plain is treated like a link
     event.dataTransfer.setData("id", id);
   };
@@ -66,7 +66,7 @@ export const Board = ({
       ) : (
         lanes.map(({ id, title }) => (
           <Lane
-            tickets={tickets.filter((t) => t.lane === title)}
+            snippets={snippets.filter((t) => t.lane === title)}
             key={id}
             title={title}
             loading={loading}

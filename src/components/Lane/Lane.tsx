@@ -1,7 +1,8 @@
 import React, { DragEventHandler } from "react";
 import styled from "styled-components";
-import { Ticket } from "../Ticket/Ticket";
-import { LaneType, OnTicketDragHandler, SingleTicket } from "../../types";
+import { Snippet } from "../Snippet/Snippet";
+import { LaneType, OnSnippetDragHandler, ISnippet } from "../../types";
+import { theme } from "../../theme/theme";
 
 const LaneWrapper = styled.div`
   list-style: none;
@@ -10,10 +11,11 @@ const LaneWrapper = styled.div`
   &:not(:last-child) {
     margin-right: 1rem;
   }
-  background: lightgray;
+  background: ${theme.color.primary.light};
   border-radius: 20px;
   min-height: 50vh;
   min-width: 20vw;
+  width: 40%;
 
   @media (max-width: 768px) {
     &:not(:last-child) {
@@ -29,18 +31,21 @@ const LaneTitle = styled.h2`
   border-bottom: 1px solid darkGray;
   padding-bottom: 10px;
 `;
+
+const SnippetsContainer = styled.div``;
+
 interface LaneProps {
   title: LaneType;
-  tickets: SingleTicket[];
+  snippets: ISnippet[];
   loading: boolean;
   onDragOver: DragEventHandler;
   onDrop: DragEventHandler;
-  onDragStart: OnTicketDragHandler;
+  onDragStart: OnSnippetDragHandler;
 }
 
 export const Lane = ({
   title,
-  tickets,
+  snippets,
   loading,
   onDragStart,
   onDrop,
@@ -49,16 +54,18 @@ export const Lane = ({
   return (
     <LaneWrapper onDragOver={onDragOver} onDrop={onDrop}>
       <LaneTitle>{title}</LaneTitle>
-      {loading
-        ? "Fetching Tickets"
-        : tickets.map((ticket) => (
-            <Ticket
-              key={ticket.title}
-              {...ticket}
-              draggable={true}
-              onDragStart={onDragStart}
-            />
-          ))}
+      <SnippetsContainer>
+        {loading
+          ? "Fetching Snippets"
+          : snippets.map((snippet) => (
+              <Snippet
+                key={snippet.title}
+                {...snippet}
+                draggable={true}
+                onDragStart={onDragStart}
+              />
+            ))}
+      </SnippetsContainer>
     </LaneWrapper>
   );
 };

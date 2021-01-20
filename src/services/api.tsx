@@ -1,4 +1,4 @@
-import { LaneType, SingleTicket } from "../types";
+import { LaneType, ISnippet } from "../types";
 import faker from "faker";
 
 function createFakeGetCall<T>(values: T[]) {
@@ -13,37 +13,37 @@ function createFakeGetCall<T>(values: T[]) {
   };
 }
 
-const tickets: SingleTicket[] = [
+const snippets: ISnippet[] = [
   {
     id: faker.random.uuid(),
     title: faker.lorem.words(1),
     body: faker.lorem.sentence(10),
-    lane: LaneType.DONE,
+    lane: LaneType.Snippet,
   },
   {
     id: faker.random.uuid(),
     title: faker.lorem.words(1),
     body: faker.lorem.sentence(10),
-    lane: LaneType.TODO,
+    lane: LaneType.Snippet,
   },
   {
     id: faker.random.uuid(),
     title: faker.lorem.words(1),
     body: faker.lorem.sentence(10),
-    lane: LaneType.IN_PROGRES,
+    lane: LaneType.Draft,
   },
   {
     id: faker.random.uuid(),
     title: faker.lorem.words(1),
     body: faker.lorem.sentence(10),
-    lane: LaneType.REVIEW,
+    lane: LaneType.Draft,
   },
   {
     id: faker.random.uuid(),
     title: faker.lorem.words(1),
     body: faker.lorem.sentence(10),
-    lane: LaneType.REVIEW,
+    lane: LaneType.Draft,
   },
 ];
 
-export const getTickets = createFakeGetCall(tickets);
+export const getSnippets = createFakeGetCall(snippets);
