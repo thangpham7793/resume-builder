@@ -35,13 +35,10 @@ export const SnippetContextProvider: FC<Props> = ({ children }) => {
   }, [withDispatch]);
 
   return (
-    <SnippetDispatchContext.Provider value={dispatch}>
-      <SnippetContext.Provider
-        value={{
-          ...state,
-          dispatches: { moveSnippet: withDispatch(moveSnippet) },
-        }}
-      >
+    <SnippetDispatchContext.Provider
+      value={{ moveSnippet: withDispatch(moveSnippet) }}
+    >
+      <SnippetContext.Provider value={state}>
         {children}
       </SnippetContext.Provider>
     </SnippetDispatchContext.Provider>

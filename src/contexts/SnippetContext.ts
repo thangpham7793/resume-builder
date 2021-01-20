@@ -1,19 +1,31 @@
 import React from "react";
 import { ISnippet } from "./../types";
-import { SnippetMovedPayload } from "./types";
+import { SnippetDispatch, SnippetMovedPayload } from "./types";
 import { SnippetState, SnippetAction, SnippetActionType } from "./types";
 
+// initial states
 export const initialState: SnippetState = {
   snippets: [],
   moveableSnippets: [],
   error: null,
   loading: true,
   draft: [],
-  dispatches: {
-    moveSnippet: (payload: SnippetMovedPayload) => {},
-  },
 };
 
+export const initialDispatch = {
+  moveSnippet: (_: SnippetMovedPayload) => {},
+};
+
+export const SnippetContext = React.createContext<SnippetState>(initialState);
+export const useSnippetContextDispatch = () =>
+  React.useContext(SnippetDispatchContext);
+
+export const useSnippetContext = () => React.useContext(SnippetContext);
+export const SnippetDispatchContext = React.createContext<SnippetDispatch>(
+  initialDispatch
+);
+
+// reducer
 export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
   console.log(action);
   switch (action.type) {
@@ -39,14 +51,7 @@ export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
   }
 };
 
-export const SnippetContext = React.createContext<SnippetState>(initialState);
-
-export const useSnippetContext = () => React.useContext(SnippetContext);
-export const SnippetDispatchContext = React.createContext<null | React.Dispatch<SnippetAction>>(
-  null
-);
-
-//Public API to interact with context
+// Public API to interact with context
 export const moveSnippet = (
   dispatch: React.Dispatch<SnippetAction>,
   payload: SnippetMovedPayload

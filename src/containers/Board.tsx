@@ -1,7 +1,10 @@
 import React, { DragEventHandler } from "react";
 import styled from "styled-components";
 import { Lane } from "../components/Lane/Lane";
-import { useSnippetContext } from "../contexts/SnippetContext";
+import {
+  useSnippetContext,
+  useSnippetContextDispatch,
+} from "../contexts/SnippetContext";
 import { LaneConfig, LaneType, OnSnippetClickedHandler } from "../types";
 
 const BoardWrapper = styled.div`
@@ -24,12 +27,8 @@ interface BoardProps {
 }
 
 export const Board = ({ lanes }: BoardProps) => {
-  const {
-    loading,
-    error,
-    moveableSnippets,
-    dispatches: { moveSnippet },
-  } = useSnippetContext();
+  const { loading, error, moveableSnippets } = useSnippetContext();
+  const { moveSnippet } = useSnippetContextDispatch();
 
   // factoryFunction for onDrop since it needs the title of the target lane
   const createOnSnippetDroppedHandler = (

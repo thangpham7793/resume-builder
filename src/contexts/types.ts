@@ -29,7 +29,8 @@ export type SnippetState = {
   error: Error | null;
   loading: boolean;
   draft: ISnippet[];
-  dispatches: {
-    moveSnippet: (payload: SnippetMovedPayload) => void;
-  };
+};
+
+export type SnippetDispatch = {
+  moveSnippet: (payload: SnippetMovedPayload) => void;
 };
