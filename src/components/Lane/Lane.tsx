@@ -43,9 +43,7 @@ interface LaneProps {
   title: LaneType;
   moveableSnippets: ISnippet[];
   loading: boolean;
-  onDragOver: DragEventHandler;
   onDrop: DragEventHandler;
-  onDragStart: OnSnippetDraggedHandler;
   onSnippetClicked: OnSnippetClickedHandler;
 }
 
@@ -53,11 +51,20 @@ export const Lane = ({
   title,
   moveableSnippets,
   loading,
-  onDragStart,
   onDrop,
-  onDragOver,
   onSnippetClicked,
 }: LaneProps) => {
+  const onDragStart: OnSnippetDraggedHandler = (event, id) => {
+    // text/plain is treated like a link
+    event.dataTransfer.setData("id", id);
+  };
+
+  const onDragOver: DragEventHandler = (event) => {
+    if (event.dataTransfer.types.includes("id")) {
+      event.preventDefault();
+    }
+  };
+
   return (
     <LaneWrapper onDragOver={onDragOver} onDrop={onDrop}>
       <LaneTitle>{title}</LaneTitle>

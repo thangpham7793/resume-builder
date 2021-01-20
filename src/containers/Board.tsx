@@ -1,17 +1,8 @@
-import React, { DragEventHandler, MouseEventHandler } from "react";
+import React, { DragEventHandler } from "react";
 import styled from "styled-components";
 import { Lane } from "../components/Lane/Lane";
-import {
-  LaneConfig,
-  LaneType,
-  OnSnippetDraggedHandler,
-  OnSnippetClickedHandler,
-} from "../types";
-import {
-  SnippetAction,
-  SnippetState,
-  SnippetActionType,
-} from "../contexts/SnippetContextProvider";
+import { useSnippetContext } from "../contexts/SnippetContext";
+import { LaneConfig, LaneType, OnSnippetClickedHandler } from "../types";
 
 const BoardWrapper = styled.div`
   justify-content: space-around;
@@ -28,54 +19,41 @@ const Alert = styled.div`
   text-align: center;
 `;
 
-interface BoardProps extends SnippetState {
+interface BoardProps {
   lanes: LaneConfig[];
-  snippetDispatch: React.Dispatch<SnippetAction>;
 }
 
-export const Board = ({
-  lanes,
-  error,
-  moveableSnippets,
-  loading,
-  snippetDispatch,
-}: BoardProps) => {
-  const onDragOver: DragEventHandler = (event) => {
-    if (event.dataTransfer.types.includes("id")) {
-      event.preventDefault();
-    }
-  };
+export const Board = ({ lanes }: BoardProps) => {
+  const {
+    loading,
+    error,
+    moveableSnippets,
+    dispatches: { moveSnippet },
+  } = useSnippetContext();
+
   // factoryFunction for onDrop since it needs the title of the target lane
-  const createOnSnippetDroppedHandler = (title: LaneType): DragEventHandler => {
+  const createOnSnippetDroppedHandler = (
+    newLane: LaneType
+  ): DragEventHandler => {
     return (event) => {
-      const droppedSnippetId = event.dataTransfer.getData("id");
-      snippetDispatch({
-        type: SnippetActionType.MOVE_SNIPPET,
-        payload: {
-          snippetId: droppedSnippetId,
-          newLane: title,
-        },
+      const id = event.dataTransfer.getData("id");
+      moveSnippet({
+        id,
+        newLane,
       });
     };
   };
 
   const createOnSnippetClickedHandler = (
-    title: LaneType
+    currentLane: LaneType
   ): OnSnippetClickedHandler => {
     return (id) => {
-      snippetDispatch({
-        type: SnippetActionType.MOVE_SNIPPET,
-        payload: {
-          snippetId: id,
-          newLane: title === LaneType.Draft ? LaneType.Snippet : LaneType.Draft,
-        },
+      moveSnippet({
+        id,
+        newLane:
+          currentLane === LaneType.Draft ? LaneType.Snippet : LaneType.Draft,
       });
     };
-  };
-
-  const onDragStart: OnSnippetDraggedHandler = (event, id) => {
-    // text/plain is treated like a link
-    event.dataTransfer.setData("id", id);
   };
 
   return (
@@ -89,8 +67,6 @@ export const Board = ({
             key={id}
             title={title}
             loading={loading}
-            onDragStart={onDragStart}
-            onDragOver={onDragOver}
             onDrop={createOnSnippetDroppedHandler(title)}
             onSnippetClicked={createOnSnippetClickedHandler(title)}
           />

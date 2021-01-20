@@ -1,10 +1,6 @@
 import React from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { Header } from "../components/Header/Header";
-import {
-  useSnippetContext,
-  useSnippetContextDispatch,
-} from "../contexts/SnippetContextProvider";
 import { theme } from "../theme/theme";
 import { LaneType } from "../types";
 import { Board } from "./Board";
@@ -32,19 +28,12 @@ function App() {
     { id: 2, title: LaneType.Draft },
   ];
 
-  const snippetsContext = useSnippetContext();
-  const snippetDispatch = useSnippetContextDispatch();
-
   return (
     <>
       <GlobalStyle />
       <AppWrapper>
         <Header />
-        <Board
-          lanes={lanes}
-          snippetDispatch={snippetDispatch}
-          {...snippetsContext}
-        />
+        <Board lanes={lanes} />
       </AppWrapper>
     </>
   );
