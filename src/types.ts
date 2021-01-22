@@ -5,7 +5,6 @@ export enum LaneType {
 
 export type ISnippet = {
   id: string;
-  title: string;
   body: string;
   lane: LaneType;
   tags?: string[];

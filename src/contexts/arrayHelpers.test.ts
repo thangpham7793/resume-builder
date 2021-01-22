@@ -6,21 +6,18 @@ describe("Array Helpers Test", () => {
       const snippets = [
         {
           id: "1",
-          title: "snippet 1",
           body: "body",
           lane: LaneType.Draft,
           tags: [],
         },
         {
           id: "2",
-          title: "snippet 2",
           body: "body",
           lane: LaneType.Draft,
           tags: [],
         },
         {
           id: "3",
-          title: "snippet 3",
           body: "body",
           lane: LaneType.Draft,
           tags: [],
@@ -43,21 +40,18 @@ describe("Array Helpers Test", () => {
       const snippets = [
         {
           id: "1",
-          title: "snippet 1",
           body: "body",
           lane: LaneType.Draft,
           tags: [],
         },
         {
           id: "2",
-          title: "snippet 2",
           body: "body",
           lane: LaneType.Draft,
           tags: [],
         },
         {
           id: "3",
-          title: "snippet 3",
           body: "body",
           lane: LaneType.Draft,
           tags: [],
