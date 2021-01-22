@@ -1,8 +1,9 @@
 import { ISnippet } from "../types";
-import { SwapSnippetsOrderPayload } from "./types";
 
-type SwapSnippetsProps = SwapSnippetsOrderPayload & {
+type SwapSnippetsProps = {
   snippets: ISnippet[];
+  currentId: string;
+  droppedId: string;
 };
 
 export const swapSnippets = ({
