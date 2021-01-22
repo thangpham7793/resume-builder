@@ -2,7 +2,6 @@ import React from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { Header } from "../components/Header/Header";
 import { theme } from "../theme/theme";
-import { LaneType } from "../types";
 import { Board } from "./Board";
 
 const GlobalStyle = createGlobalStyle`

@@ -12,7 +12,6 @@ const BoardWrapper = styled.div`
   justify-content: space-around;
   display: flex;
   flex-direction: row;
-  margin: 1rem 1rem 0 1rem;
 
   @media (max-width: 768px) {
     flex-direction: column;

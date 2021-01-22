@@ -21,22 +21,25 @@ const LaneWrapper = styled.div`
   background: ${theme.color.primary.light};
   border-radius: 20px;
   min-height: 50vh;
-  min-width: 20vw;
-  width: 40%;
+  min-width: 30vw;
+  max-width: 50vw;
+  margin: 0 auto;
 
   @media (max-width: 768px) {
     &:not(:last-child) {
       margin-bottom: 1rem;
       margin-right: 0;
     }
+    max-width: 100vw;
   }
 `;
 
-const LaneTitle = styled.h2`
-  width: 100%;
+const LaneTitle = styled.h3`
+  max-width: 40%;
   text-align: center;
   border-bottom: 1px solid darkGray;
-  padding-bottom: 10px;
+  margin-right: auto;
+  margin-left: auto;
 `;
 
 const SnippetsContainer = styled.div``;
