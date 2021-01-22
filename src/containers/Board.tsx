@@ -1,5 +1,6 @@
+import { Document, Packer, Paragraph } from "docx";
 import { FaFilePdf, FaFileWord } from "react-icons/fa";
-import { LaneType, OnSnippetClickedHandler } from "../types";
+import { ISnippet, LaneType, OnSnippetClickedHandler } from "../types";
 import React, { DragEventHandler } from "react";
 import {
   useSnippetContext,
@@ -10,6 +11,7 @@ import { ConvertIcon } from "../components/ConvertIcon/ConvertIcon";
 import { Lane } from "../components/Lane/Lane";
 import { SnippetData } from "../components/constants";
 import faker from "faker";
+import { saveAs } from "file-saver";
 import styled from "styled-components";
 import { theme } from "../theme/theme";
 
@@ -60,11 +62,19 @@ export const Board = () => {
     };
   };
 
+  const convertToDoc = async (snippets: ISnippet[]) => {
+    const doc = new Document();
+    const paras = snippets.map((s) => new Paragraph(s.body));
+    doc.addSection({ children: paras });
+    const blob = await Packer.toBlob(doc);
+    saveAs(blob, "my-cover-letter.docx");
+  };
+
   const convertIcons = [
     {
       key: faker.random.uuid(),
       icon: () => <FaFileWord fontSize={theme.text.fontSize.xl} />,
-      onClick: () => console.log("convert"),
+      onClick: () => convertToDoc(draft),
     },
     {
       key: faker.random.uuid(),
