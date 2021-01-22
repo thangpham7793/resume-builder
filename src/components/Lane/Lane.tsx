@@ -1,18 +1,16 @@
-import React, { DragEventHandler } from "react";
-import styled from "styled-components";
-import { FaFileWord, FaFilePdf } from "react-icons/fa";
-import { Snippet } from "../Snippet/Snippet";
 import {
-  LaneType,
-  OnSnippetDraggedHandler,
   ISnippet,
+  LaneType,
   OnSnippetClickedHandler,
+  OnSnippetDraggedHandler,
 } from "../../types";
+import React, { DragEventHandler } from "react";
+
+import { Snippet } from "../Snippet/Snippet";
+import { SnippetData } from "../constants";
+import styled from "styled-components";
 import { theme } from "../../theme/theme";
 import { useSnippetContextDispatch } from "../../contexts/SnippetContext";
-import { SnippetData } from "../constants";
-import { ConvertIcon } from "../ConvertIcon/ConvertIcon";
-import { IconType } from "react-icons/lib";
 
 const getMaxWidth = (lane: LaneType) =>
   lane === LaneType.Draft ? `65vw` : `30vw`;
@@ -46,10 +44,6 @@ const LaneTitleWrapper = styled.div`
   align-items: center;
 `;
 
-const IconWrapper = styled.div`
-  text-align: center;
-`;
-
 const LaneTitle = styled.div``;
 
 const SnippetsContainer = styled.div``;
@@ -60,6 +54,7 @@ interface LaneProps {
   loading: boolean;
   onDrop: DragEventHandler;
   onSnippetClicked: OnSnippetClickedHandler;
+  icons?: JSX.Element[];
 }
 
 export const Lane = ({
@@ -68,6 +63,7 @@ export const Lane = ({
   loading,
   onDrop,
   onSnippetClicked,
+  icons,
 }: LaneProps) => {
   const onDragStart: OnSnippetDraggedHandler = ({ event, id, currentLane }) => {
     // text/plain is treated like a link
@@ -94,31 +90,13 @@ export const Lane = ({
     });
   };
 
-  const convertIcons = [
-    {
-      icon: () => <FaFileWord fontSize={theme.text.fontSize.xl} />,
-      onClick: () => console.log("covert"),
-    },
-    {
-      icon: () => <FaFilePdf fontSize={theme.text.fontSize.xl} />,
-      onClick: () => console.log("covert"),
-    },
-  ];
-
-  const renderConvertIcons = () =>
-    convertIcons.map((i, index) => (
-      <IconWrapper key={index} onClick={i.onClick}>
-        <ConvertIcon icon={i.icon} />
-      </IconWrapper>
-    ));
-
   return (
     <LaneWrapper lane={lane} onDragOver={onDragOver} onDrop={onDrop}>
       <LaneTitleWrapper>
         <LaneTitle>
           <h3>{lane}</h3>
         </LaneTitle>
-        {lane === LaneType.Draft && renderConvertIcons()}
+        {icons && icons}
       </LaneTitleWrapper>
 
       <SnippetsContainer>

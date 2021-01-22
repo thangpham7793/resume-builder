@@ -1,8 +1,9 @@
-import React from "react";
 import styled, { createGlobalStyle } from "styled-components";
-import { Header } from "../components/Header/Header";
-import { theme } from "../theme/theme";
+
 import { Board } from "./Board";
+import { Header } from "../components/Header/Header";
+import React from "react";
+import { theme } from "../theme/theme";
 
 const GlobalStyle = createGlobalStyle`
   body {

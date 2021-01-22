@@ -1,12 +1,17 @@
+import { FaFilePdf, FaFileWord } from "react-icons/fa";
+import { LaneType, OnSnippetClickedHandler } from "../types";
 import React, { DragEventHandler } from "react";
-import styled from "styled-components";
-import { SnippetData } from "../components/constants";
-import { Lane } from "../components/Lane/Lane";
 import {
   useSnippetContext,
   useSnippetContextDispatch,
 } from "../contexts/SnippetContext";
-import { LaneType, OnSnippetClickedHandler } from "../types";
+
+import { ConvertIcon } from "../components/ConvertIcon/ConvertIcon";
+import { Lane } from "../components/Lane/Lane";
+import { SnippetData } from "../components/constants";
+import faker from "faker";
+import styled from "styled-components";
+import { theme } from "../theme/theme";
 
 const BoardWrapper = styled.div`
   justify-content: space-around;
@@ -55,6 +60,22 @@ export const Board = () => {
     };
   };
 
+  const convertIcons = [
+    {
+      key: faker.random.uuid(),
+      icon: () => <FaFileWord fontSize={theme.text.fontSize.xl} />,
+      onClick: () => console.log("convert"),
+    },
+    {
+      key: faker.random.uuid(),
+      icon: () => <FaFilePdf fontSize={theme.text.fontSize.xl} />,
+      onClick: () => console.log("convert"),
+    },
+  ];
+
+  const renderIcons = (iconProps: typeof convertIcons) =>
+    iconProps.map((props) => <ConvertIcon {...props} />);
+
   return (
     <BoardWrapper>
       {error ? (
@@ -76,6 +97,7 @@ export const Board = () => {
             loading={loading}
             onDrop={createOnSnippetDroppedHandler(LaneType.Draft)}
             onSnippetClicked={createOnSnippetClickedHandler(LaneType.Draft)}
+            icons={renderIcons(convertIcons)}
           />
         </>
       )}

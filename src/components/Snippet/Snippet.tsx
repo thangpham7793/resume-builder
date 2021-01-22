@@ -1,12 +1,13 @@
-import React, { DragEventHandler } from "react";
-import styled from "styled-components";
-import { effect, theme } from "../../theme/theme";
 import {
-  OnSnippetDraggedHandler,
   ISnippet,
-  OnSnippetClickedHandler,
   LaneType,
+  OnSnippetClickedHandler,
+  OnSnippetDraggedHandler,
 } from "../../types";
+import React, { DragEventHandler } from "react";
+import { effect, theme } from "../../theme/theme";
+
+import styled from "styled-components";
 
 const getBackground = (lane: LaneType) => {
   return lane === LaneType.Draft
