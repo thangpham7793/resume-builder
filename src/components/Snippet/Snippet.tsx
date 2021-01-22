@@ -43,7 +43,7 @@ export const Snippet = ({
 
   return (
     <SnippetWrapper
-      draggable={lane === LaneType.Draft}
+      draggable={true}
       onDragStart={(event) => onDragStart({ event, id, currentLane: lane })}
       onClick={() => onClick(id)}
       onDrop={onDrop}

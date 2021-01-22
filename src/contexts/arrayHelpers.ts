@@ -13,16 +13,17 @@ export const swapSnippets = ({
   const currentIndex = snippets.findIndex((s) => s.id === currentId);
   const droppedIndex = snippets.findIndex((s) => s.id === droppedId);
 
-  const currentSnippet = snippets[currentIndex];
-  const droppedSnippet = snippets[droppedIndex];
-
   // not in the same lane, do nothing
   if (currentIndex === -1 || droppedIndex === -1) return snippets;
 
-  // swap in place of the original array (this is pretty bad though ...)
-  snippets[currentIndex] = droppedSnippet;
-  snippets[droppedIndex] = currentSnippet;
-  return snippets;
+  const currentSnippet = snippets[currentIndex];
+  const droppedSnippet = snippets[droppedIndex];
+
+  const newSnippets = [...snippets];
+
+  newSnippets[currentIndex] = droppedSnippet;
+  newSnippets[droppedIndex] = currentSnippet;
+  return newSnippets;
 };
 
 type DeleteSnippetByIdProps = {
