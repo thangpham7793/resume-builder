@@ -1,6 +1,11 @@
 import React from "react";
-import { ISnippet } from "./../types";
-import { SnippetDispatch, SnippetMovedPayload } from "./types";
+import { ISnippet, LaneType } from "./../types";
+import { deleteSnippetById, swapSnippets } from "./arrayHelpers";
+import {
+  SnippetDispatch,
+  SnippetMovedPayload,
+  SwapSnippetsOrderPayload,
+} from "./types";
 import { SnippetState, SnippetAction, SnippetActionType } from "./types";
 
 // initial states
@@ -14,6 +19,7 @@ export const initialState: SnippetState = {
 
 export const initialDispatch = {
   moveSnippet: (_: SnippetMovedPayload) => {},
+  swapSnippetsOrder: (_: SwapSnippetsOrderPayload) => {},
 };
 
 export const SnippetContext = React.createContext<SnippetState>(initialState);
@@ -27,25 +33,65 @@ export const SnippetDispatchContext = React.createContext<SnippetDispatch>(
 
 // reducer
 export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
-  console.log(action);
+  // console.log(action);
   switch (action.type) {
     case SnippetActionType.HYDRATE:
-      draft.snippets = action.payload as ISnippet[];
+      const snippets = action.payload as ISnippet[];
+      draft.snippets = snippets.filter((s) => s.lane === LaneType.Snippet);
+      draft.draft = snippets.filter((s) => s.lane === LaneType.Draft);
       draft.moveableSnippets = [...draft.snippets];
       draft.loading = false;
       return draft;
+
     case SnippetActionType.MOVE_TO_NEW_LANE:
-      const { id, newLane } = action.payload as SnippetMovedPayload;
-      for (const snippet of draft.moveableSnippets) {
-        if (snippet.id === id) {
-          snippet.lane = newLane;
-          break;
+      const {
+        id,
+        newLane,
+        currentLane,
+      } = action.payload as SnippetMovedPayload;
+
+      if (newLane === currentLane) return draft;
+
+      if (newLane === LaneType.Draft) {
+        for (const snippet of draft.moveableSnippets) {
+          if (snippet.id === id) {
+            snippet.lane = newLane;
+            draft.draft.push(snippet);
+            draft.moveableSnippets = deleteSnippetById({
+              snippets: draft.moveableSnippets,
+              id,
+            });
+            break;
+          }
+        }
+      } else {
+        for (const snippet of draft.draft) {
+          if (snippet.id === id) {
+            snippet.lane = newLane;
+            draft.moveableSnippets.push(snippet);
+            draft.draft = deleteSnippetById({ snippets: draft.draft, id });
+            break;
+          }
         }
       }
       return draft;
+
+    case SnippetActionType.SWAP_SNIPPETS_ORDER:
+      const {
+        currentId,
+        droppedId,
+      } = action.payload as SwapSnippetsOrderPayload;
+      draft.draft = swapSnippets({
+        snippets: draft.draft,
+        currentId,
+        droppedId,
+      });
+      return draft;
+
     case SnippetActionType.ERROR:
       draft.error = action.payload as Error;
       return draft;
+
     default:
       return draft;
   }
@@ -76,5 +122,14 @@ export const raiseFetchSnippetError = (
 ) =>
   dispatch({
     type: SnippetActionType.ERROR,
+    payload,
+  });
+
+export const swapSnippetsOrder = (
+  dispatch: React.Dispatch<SnippetAction>,
+  payload: SwapSnippetsOrderPayload
+) =>
+  dispatch({
+    type: SnippetActionType.SWAP_SNIPPETS_ORDER,
     payload,
   });

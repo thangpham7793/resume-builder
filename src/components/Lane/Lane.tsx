@@ -8,6 +8,8 @@ import {
   OnSnippetClickedHandler,
 } from "../../types";
 import { theme } from "../../theme/theme";
+import { useSnippetContextDispatch } from "../../contexts/SnippetContext";
+import { SnippetData } from "../constants";
 
 const LaneWrapper = styled.div`
   list-style: none;
@@ -41,7 +43,7 @@ const SnippetsContainer = styled.div``;
 
 interface LaneProps {
   title: LaneType;
-  moveableSnippets: ISnippet[];
+  snippets: ISnippet[];
   loading: boolean;
   onDrop: DragEventHandler;
   onSnippetClicked: OnSnippetClickedHandler;
@@ -49,35 +51,48 @@ interface LaneProps {
 
 export const Lane = ({
   title,
-  moveableSnippets,
+  snippets,
   loading,
   onDrop,
   onSnippetClicked,
 }: LaneProps) => {
-  const onDragStart: OnSnippetDraggedHandler = (event, id) => {
+  const onDragStart: OnSnippetDraggedHandler = ({ event, id, currentLane }) => {
     // text/plain is treated like a link
-    event.dataTransfer.setData("id", id);
+    event.dataTransfer.setData(
+      SnippetData,
+      JSON.stringify({ id, currentLane })
+    );
   };
 
   const onDragOver: DragEventHandler = (event) => {
-    if (event.dataTransfer.types.includes("id")) {
+    if (event.dataTransfer.types.includes(SnippetData.toLowerCase())) {
       event.preventDefault();
     }
   };
 
+  const { swapSnippetsOrder } = useSnippetContextDispatch();
+  const createOnTicketDroppedToSwapOrder = (
+    currentId: string
+  ): DragEventHandler => (event) => {
+    const { id } = JSON.parse(event.dataTransfer.getData(SnippetData));
+    swapSnippetsOrder({
+      currentId,
+      droppedId: id,
+    });
+  };
   return (
     <LaneWrapper onDragOver={onDragOver} onDrop={onDrop}>
       <LaneTitle>{title}</LaneTitle>
       <SnippetsContainer>
         {loading
           ? "Fetching Snippets"
-          : moveableSnippets.map((snippet) => (
+          : snippets.map((snippet) => (
               <Snippet
                 key={snippet.id}
                 {...snippet}
-                draggable={true}
                 onDragStart={onDragStart}
                 onClick={onSnippetClicked}
+                onDrop={createOnTicketDroppedToSwapOrder(snippet.id)}
               />
             ))}
       </SnippetsContainer>

@@ -1,11 +1,12 @@
 import React, { DragEventHandler } from "react";
 import styled from "styled-components";
+import { SnippetData } from "../components/constants";
 import { Lane } from "../components/Lane/Lane";
 import {
   useSnippetContext,
   useSnippetContextDispatch,
 } from "../contexts/SnippetContext";
-import { LaneConfig, LaneType, OnSnippetClickedHandler } from "../types";
+import { LaneType, OnSnippetClickedHandler } from "../types";
 
 const BoardWrapper = styled.div`
   justify-content: space-around;
@@ -22,12 +23,8 @@ const Alert = styled.div`
   text-align: center;
 `;
 
-interface BoardProps {
-  lanes: LaneConfig[];
-}
-
-export const Board = ({ lanes }: BoardProps) => {
-  const { loading, error, moveableSnippets } = useSnippetContext();
+export const Board = () => {
+  const { loading, error, moveableSnippets, draft } = useSnippetContext();
   const { moveSnippet } = useSnippetContextDispatch();
 
   // factoryFunction for onDrop since it needs the title of the target lane
@@ -35,10 +32,13 @@ export const Board = ({ lanes }: BoardProps) => {
     newLane: LaneType
   ): DragEventHandler => {
     return (event) => {
-      const id = event.dataTransfer.getData("id");
+      const { id, currentLane } = JSON.parse(
+        event.dataTransfer.getData(SnippetData)
+      );
       moveSnippet({
         id,
         newLane,
+        currentLane,
       });
     };
   };
@@ -49,6 +49,7 @@ export const Board = ({ lanes }: BoardProps) => {
     return (id) => {
       moveSnippet({
         id,
+        currentLane,
         newLane:
           currentLane === LaneType.Draft ? LaneType.Snippet : LaneType.Draft,
       });
@@ -60,16 +61,25 @@ export const Board = ({ lanes }: BoardProps) => {
       {error ? (
         <Alert>{error.message}</Alert>
       ) : (
-        lanes.map(({ id, title }) => (
+        <>
           <Lane
-            moveableSnippets={moveableSnippets.filter((t) => t.lane === title)}
-            key={id}
-            title={title}
+            snippets={moveableSnippets}
+            key={LaneType.Snippet}
+            title={LaneType.Snippet}
             loading={loading}
-            onDrop={createOnSnippetDroppedHandler(title)}
-            onSnippetClicked={createOnSnippetClickedHandler(title)}
+            onDrop={createOnSnippetDroppedHandler(LaneType.Snippet)}
+            onSnippetClicked={createOnSnippetClickedHandler(LaneType.Snippet)}
           />
-        ))
+          <Lane
+            // FIXME: this does trigger re-rendering since title is constant
+            snippets={draft}
+            key={LaneType.Draft}
+            title={LaneType.Draft}
+            loading={loading}
+            onDrop={createOnSnippetDroppedHandler(LaneType.Draft)}
+            onSnippetClicked={createOnSnippetClickedHandler(LaneType.Draft)}
+          />
+        </>
       )}
     </BoardWrapper>
   );

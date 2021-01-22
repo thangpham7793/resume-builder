@@ -9,6 +9,7 @@ import {
   hydrateState,
   moveSnippet,
   raiseFetchSnippetError,
+  swapSnippetsOrder,
 } from "./SnippetContext";
 import { SnippetContextPublicMethod } from "./types";
 
@@ -36,7 +37,10 @@ export const SnippetContextProvider: FC<Props> = ({ children }) => {
 
   return (
     <SnippetDispatchContext.Provider
-      value={{ moveSnippet: withDispatch(moveSnippet) }}
+      value={{
+        moveSnippet: withDispatch(moveSnippet),
+        swapSnippetsOrder: withDispatch(swapSnippetsOrder),
+      }}
     >
       <SnippetContext.Provider value={state}>
         {children}

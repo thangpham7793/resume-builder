@@ -1,10 +1,11 @@
-import React from "react";
+import React, { DragEventHandler } from "react";
 import styled from "styled-components";
 import { theme } from "../../theme/theme";
 import {
   OnSnippetDraggedHandler,
   ISnippet,
   OnSnippetClickedHandler,
+  LaneType,
 } from "../../types";
 
 const SnippetWrapper = styled.div`
@@ -24,26 +25,28 @@ const SnippetBody = styled.p`
 `;
 
 interface SnippetProps extends ISnippet {
-  draggable: boolean;
   onDragStart: OnSnippetDraggedHandler;
   onClick: OnSnippetClickedHandler;
+  onDrop: DragEventHandler;
 }
 
 export const Snippet = ({
   body,
   id,
   tags = [""],
-  draggable = false,
   onDragStart,
   onClick,
+  onDrop,
+  lane,
 }: SnippetProps) => {
   const renderTags = (tags: string[]) => `#${tags.join(" #")}`;
 
   return (
     <SnippetWrapper
-      draggable={draggable}
-      onDragStart={(e) => onDragStart(e, id)}
+      draggable={lane === LaneType.Draft}
+      onDragStart={(event) => onDragStart({ event, id, currentLane: lane })}
       onClick={() => onClick(id)}
+      onDrop={onDrop}
     >
       <SnippetBody>{body}</SnippetBody>
       <SnippetTags>{renderTags(tags)}</SnippetTags>

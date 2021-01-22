@@ -11,14 +11,14 @@ export type ISnippet = {
   tags?: string[];
 };
 
-export type LaneConfig = {
-  id: number;
-  title: LaneType;
+type OnSnippetDraggedHandlerProps = {
+  event: React.DragEvent<HTMLDivElement>;
+  id: string;
+  currentLane: LaneType;
 };
 
 export type OnSnippetDraggedHandler = (
-  event: React.DragEvent<HTMLDivElement>,
-  id: string
+  props: OnSnippetDraggedHandlerProps
 ) => void;
 
 export type OnSnippetClickedHandler = (id: string) => void;

@@ -23,17 +23,12 @@ const AppWrapper = styled.div`
 `;
 
 function App() {
-  const lanes = [
-    { id: 1, title: LaneType.Snippet },
-    { id: 2, title: LaneType.Draft },
-  ];
-
   return (
     <>
       <GlobalStyle />
       <AppWrapper>
         <Header />
-        <Board lanes={lanes} />
+        <Board />
       </AppWrapper>
     </>
   );

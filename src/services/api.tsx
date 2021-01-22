@@ -5,7 +5,7 @@ function createFakeGetCall<T>(values: T[]) {
   return async () => {
     return new Promise<T[]>((resolve, reject) => {
       try {
-        setTimeout(() => resolve(values), 2000);
+        setTimeout(() => resolve(values), 0);
       } catch (error) {
         reject(error);
       }
@@ -13,7 +13,7 @@ function createFakeGetCall<T>(values: T[]) {
   };
 }
 
-const word = (n: number) => faker.lorem.words(n);
+export const word = (n: number) => faker.lorem.words(n);
 
 const snippets: ISnippet[] = [
   {
@@ -34,12 +34,19 @@ const snippets: ISnippet[] = [
     id: faker.random.uuid(),
     title: `${word(1)}`,
     body: faker.lorem.sentence(10),
-    lane: LaneType.Snippet,
+    lane: LaneType.Draft,
     tags: [`${word(1)}`, `${word(1)}`],
   },
   {
     id: faker.random.uuid(),
     title: `${faker.lorem.words(1)}`,
+    body: faker.lorem.sentence(10),
+    lane: LaneType.Draft,
+    tags: [`${word(1)}`, `${word(1)}`],
+  },
+  {
+    id: faker.random.uuid(),
+    title: faker.lorem.words(1),
     body: faker.lorem.sentence(10),
     lane: LaneType.Snippet,
     tags: [`${word(1)}`, `${word(1)}`],
@@ -48,7 +55,7 @@ const snippets: ISnippet[] = [
     id: faker.random.uuid(),
     title: faker.lorem.words(1),
     body: faker.lorem.sentence(10),
-    lane: LaneType.Snippet,
+    lane: LaneType.Draft,
     tags: [`${word(1)}`, `${word(1)}`],
   },
 ];

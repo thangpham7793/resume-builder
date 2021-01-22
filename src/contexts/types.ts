@@ -4,14 +4,21 @@ export enum SnippetActionType {
   HYDRATE = "HYDRATE",
   MOVE_TO_NEW_LANE = "MOVE_TO_NEW_LANE",
   ERROR = "ERROR",
+  SWAP_SNIPPETS_ORDER = "SWAP_SNIPPETS_ORDER",
 }
 
-export type SnippetMovedPayload = { newLane: LaneType; id: string };
+export type SnippetMovedPayload = {
+  newLane: LaneType;
+  currentLane: LaneType;
+  id: string;
+};
+export type SwapSnippetsOrderPayload = { currentId: string; droppedId: string };
 export type SnippetActionPayload =
   | ISnippet[]
   | ISnippet
   | Error
-  | SnippetMovedPayload;
+  | SnippetMovedPayload
+  | SwapSnippetsOrderPayload;
 
 export type SnippetContextPublicMethod = (
   dispatch: React.Dispatch<SnippetAction>,
@@ -33,4 +40,5 @@ export type SnippetState = {
 
 export type SnippetDispatch = {
   moveSnippet: (payload: SnippetMovedPayload) => void;
+  swapSnippetsOrder: (payload: SwapSnippetsOrderPayload) => void;
 };
