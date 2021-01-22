@@ -1,6 +1,6 @@
 import React, { DragEventHandler } from "react";
 import styled from "styled-components";
-import { theme } from "../../theme/theme";
+import { effect, theme } from "../../theme/theme";
 import {
   OnSnippetDraggedHandler,
   ISnippet,
@@ -21,6 +21,7 @@ const SnippetWrapper = styled("div")<{ lane: LaneType }>`
   margin: 1rem;
   border-radius: 5px;
   box-shadow: ${theme.boxShadow};
+  ${effect.fadeIn};
 `;
 
 const SnippetTags = styled.p`

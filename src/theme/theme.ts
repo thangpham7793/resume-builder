@@ -29,3 +29,35 @@ export const theme = {
     },
   },
 };
+
+const fadeInConfig = `0% {opacity:0; background: ${theme.color.primary.dark}}
+100% {opacity:1;}`;
+
+export const effect = {
+  fadeIn: `
+    animation: fadeIn ease 1s;
+    -webkit-animation: fadeIn ease 1s;
+    -moz-animation: fadeIn ease 1s;
+    -o-animation: fadeIn ease 1s;
+    -ms-animation: fadeIn ease 1s;
+    
+  @keyframes fadeIn {
+    ${fadeInConfig}
+  }
+  
+  @-moz-keyframes fadeIn {
+    ${fadeInConfig}
+  }
+  
+  @-webkit-keyframes fadeIn {
+    ${fadeInConfig}
+  }
+  
+  @-o-keyframes fadeIn {
+    ${fadeInConfig}
+  }
+  
+  @-ms-keyframes fadeIn {
+    ${fadeInConfig}
+  }`,
+};
