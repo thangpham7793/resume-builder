@@ -1,12 +1,13 @@
-import React from "react";
 import { ISnippet, LaneType } from "./../types";
-import { deleteSnippetById, swapSnippets } from "./arrayHelpers";
+import { SnippetAction, SnippetActionType, SnippetState } from "./types";
 import {
   SnippetDispatch,
   SnippetMovedPayload,
   SwapSnippetsOrderPayload,
 } from "./types";
-import { SnippetState, SnippetAction, SnippetActionType } from "./types";
+import { deleteSnippetById, swapSnippets } from "./arrayHelpers";
+
+import React from "react";
 
 // initial states
 export const initialState: SnippetState = {

@@ -1,5 +1,7 @@
-import { LaneType } from "./../types";
 import { deleteSnippetById, swapSnippets } from "./arrayHelpers";
+
+import { LaneType } from "./../types";
+
 describe("Array Helpers Test", () => {
   describe("Swap Snippets", () => {
     it("should swap two snippets in the same lane", () => {

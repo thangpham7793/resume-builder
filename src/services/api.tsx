@@ -1,4 +1,5 @@
-import { LaneType, ISnippet } from "../types";
+import { ISnippet, LaneType } from "../types";
+
 import faker from "faker";
 
 function createFakeGetCall<T>(values: T[]) {

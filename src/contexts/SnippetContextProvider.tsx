@@ -1,17 +1,18 @@
 import React, { FC, useEffect } from "react";
-import { getSnippets } from "../services/api";
-import { useImmerReducer } from "use-immer";
 import {
-  initialState,
   SnippetContext,
   SnippetDispatchContext,
-  snippetReducer,
   hydrateState,
+  initialState,
   moveSnippet,
   raiseFetchSnippetError,
+  snippetReducer,
   swapSnippetsOrder,
 } from "./SnippetContext";
+
 import { SnippetContextPublicMethod } from "./types";
+import { getSnippets } from "../services/api";
+import { useImmerReducer } from "use-immer";
 
 type Props = {
   children: React.ReactNode;
