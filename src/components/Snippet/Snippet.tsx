@@ -8,20 +8,29 @@ import {
   LaneType,
 } from "../../types";
 
-const SnippetWrapper = styled.div`
-  background: ${theme.color.secondary.main};
+const getBackground = (lane: LaneType) => {
+  return lane === LaneType.Draft
+    ? theme.color.primary.main
+    : theme.color.secondary.main;
+};
+
+// https://stackoverflow.com/questions/52404958/using-styled-components-with-typescript-prop-does-not-exist
+const SnippetWrapper = styled("div")<{ lane: LaneType }>`
+  background: ${({ lane }) => getBackground(lane)};
   padding: 10px;
   margin: 1rem;
-  border-radius: 20px;
+  border-radius: 5px;
+  box-shadow: ${theme.boxShadow};
 `;
 
 const SnippetTags = styled.p`
-  font-size: ${theme.text.fontSize.s};
+  font-size: ${theme.text.fontSize.ss};
   text-align: right;
 `;
 
 const SnippetBody = styled.p`
   width: 100%;
+  font-size: ${theme.text.fontSize.s};
 `;
 
 interface SnippetProps extends ISnippet {
@@ -47,6 +56,7 @@ export const Snippet = ({
       onDragStart={(event) => onDragStart({ event, id, currentLane: lane })}
       onClick={() => onClick(id)}
       onDrop={onDrop}
+      lane={lane}
     >
       <SnippetBody>{body}</SnippetBody>
       <SnippetTags>{renderTags(tags)}</SnippetTags>

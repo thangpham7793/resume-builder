@@ -6,15 +6,13 @@ const HeaderWrapper = styled.div`
   background-color: ${theme.color.primary.main};
   height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
   color: ${theme.color.primary.text};
 `;
 
 const TitleWrapper = styled.h1`
-  height: 64px;
+  font-size: ${theme.text.fontSize.m};
   pointer-events: none;
 `;
 
