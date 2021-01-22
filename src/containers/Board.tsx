@@ -64,16 +64,15 @@ export const Board = () => {
           <Lane
             snippets={moveableSnippets}
             key={LaneType.Snippet}
-            title={LaneType.Snippet}
+            lane={LaneType.Snippet}
             loading={loading}
             onDrop={createOnSnippetDroppedHandler(LaneType.Snippet)}
             onSnippetClicked={createOnSnippetClickedHandler(LaneType.Snippet)}
           />
           <Lane
-            // FIXME: this does trigger re-rendering since title is constant
             snippets={draft}
             key={LaneType.Draft}
-            title={LaneType.Draft}
+            lane={LaneType.Draft}
             loading={loading}
             onDrop={createOnSnippetDroppedHandler(LaneType.Draft)}
             onSnippetClicked={createOnSnippetClickedHandler(LaneType.Draft)}

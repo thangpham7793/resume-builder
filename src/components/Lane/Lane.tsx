@@ -1,5 +1,6 @@
 import React, { DragEventHandler } from "react";
 import styled from "styled-components";
+import { FaFileWord, FaFilePdf } from "react-icons/fa";
 import { Snippet } from "../Snippet/Snippet";
 import {
   LaneType,
@@ -10,8 +11,13 @@ import {
 import { theme } from "../../theme/theme";
 import { useSnippetContextDispatch } from "../../contexts/SnippetContext";
 import { SnippetData } from "../constants";
+import { ConvertIcon } from "../ConvertIcon/ConvertIcon";
+import { IconType } from "react-icons/lib";
 
-const LaneWrapper = styled.div`
+const getMaxWidth = (lane: LaneType) =>
+  lane === LaneType.Draft ? `65vw` : `30vw`;
+
+const LaneWrapper = styled("div")<{ lane: LaneType }>`
   list-style: none;
   text-align: left;
   padding: 0;
@@ -22,7 +28,7 @@ const LaneWrapper = styled.div`
   border-radius: 20px;
   min-height: 50vh;
   min-width: 30vw;
-  max-width: 50vw;
+  max-width: ${({ lane }) => getMaxWidth(lane)};
   margin: 0 auto;
 
   @media (max-width: 768px) {
@@ -34,18 +40,22 @@ const LaneWrapper = styled.div`
   }
 `;
 
-const LaneTitle = styled.h3`
-  max-width: 40%;
-  text-align: center;
-  border-bottom: 1px solid darkGray;
-  margin-right: auto;
-  margin-left: auto;
+const LaneTitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 `;
+
+const IconWrapper = styled.div`
+  text-align: center;
+`;
+
+const LaneTitle = styled.div``;
 
 const SnippetsContainer = styled.div``;
 
 interface LaneProps {
-  title: LaneType;
+  lane: LaneType;
   snippets: ISnippet[];
   loading: boolean;
   onDrop: DragEventHandler;
@@ -53,7 +63,7 @@ interface LaneProps {
 }
 
 export const Lane = ({
-  title,
+  lane,
   snippets,
   loading,
   onDrop,
@@ -83,9 +93,34 @@ export const Lane = ({
       droppedId: id,
     });
   };
+
+  const convertIcons = [
+    {
+      icon: () => <FaFileWord fontSize={theme.text.fontSize.xl} />,
+      onClick: () => console.log("covert"),
+    },
+    {
+      icon: () => <FaFilePdf fontSize={theme.text.fontSize.xl} />,
+      onClick: () => console.log("covert"),
+    },
+  ];
+
+  const renderConvertIcons = () =>
+    convertIcons.map((i, index) => (
+      <IconWrapper key={index} onClick={i.onClick}>
+        <ConvertIcon icon={i.icon} />
+      </IconWrapper>
+    ));
+
   return (
-    <LaneWrapper onDragOver={onDragOver} onDrop={onDrop}>
-      <LaneTitle>{title}</LaneTitle>
+    <LaneWrapper lane={lane} onDragOver={onDragOver} onDrop={onDrop}>
+      <LaneTitleWrapper>
+        <LaneTitle>
+          <h3>{lane}</h3>
+        </LaneTitle>
+        {lane === LaneType.Draft && renderConvertIcons()}
+      </LaneTitleWrapper>
+
       <SnippetsContainer>
         {loading
           ? "Fetching Snippets"

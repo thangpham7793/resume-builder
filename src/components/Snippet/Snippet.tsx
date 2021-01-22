@@ -18,7 +18,7 @@ const getBackground = (lane: LaneType) => {
 const SnippetWrapper = styled("div")<{ lane: LaneType }>`
   background: ${({ lane }) => getBackground(lane)};
   padding: 10px;
-  margin: 1rem;
+  margin: 0 1rem 1rem 1rem;
   border-radius: 5px;
   box-shadow: ${theme.boxShadow};
   ${effect.fadeIn};

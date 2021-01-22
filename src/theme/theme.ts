@@ -25,7 +25,7 @@ export const theme = {
       m: `${baseFontSize}rem`,
       xm: `${baseFontSize * 1.25}rem`,
       l: `${baseFontSize * 1.5}rem`,
-      xl: `${baseFontSize * 25}rem`,
+      xl: `${baseFontSize * 2.5}rem`,
     },
   },
 };
