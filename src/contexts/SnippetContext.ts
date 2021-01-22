@@ -56,7 +56,7 @@ export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
         for (const snippet of draft.moveableSnippets) {
           if (snippet.id === id) {
             snippet.lane = newLane;
-            draft.draft.push(snippet);
+            draft.draft = [snippet, ...draft.draft];
             draft.moveableSnippets = deleteSnippetById({
               snippets: draft.moveableSnippets,
               id,
@@ -68,7 +68,7 @@ export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
         for (const snippet of draft.draft) {
           if (snippet.id === id) {
             snippet.lane = newLane;
-            draft.moveableSnippets.push(snippet);
+            draft.moveableSnippets = [snippet, ...draft.moveableSnippets];
             draft.draft = deleteSnippetById({ snippets: draft.draft, id });
             break;
           }
