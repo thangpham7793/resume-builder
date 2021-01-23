@@ -13,6 +13,7 @@ import { SnippetData } from "../components/constants";
 import faker from "faker";
 import { saveAs } from "file-saver";
 import styled from "styled-components";
+import { styles } from "./docStyles";
 import { theme } from "../theme/theme";
 import { useTheme } from "../theme/ThemeContext";
 
@@ -64,8 +65,16 @@ export const Board = () => {
   };
 
   const convertToDoc = async (snippets: ISnippet[]) => {
-    const doc = new Document();
-    const paras = snippets.map((s) => new Paragraph(s.body));
+    const doc = new Document({
+      styles,
+    });
+    const paras = snippets.map(
+      (s) =>
+        new Paragraph({
+          text: s.body.trim(),
+          style: "normalPara",
+        })
+    );
     doc.addSection({ children: paras });
     const blob = await Packer.toBlob(doc);
     saveAs(blob, "my-cover-letter.docx");
