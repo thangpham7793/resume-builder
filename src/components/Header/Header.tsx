@@ -1,5 +1,6 @@
 import React from "react";
 import { Theme } from "../../theme/theme";
+import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import styled from "styled-components";
 import { useTheme } from "../../theme/ThemeContext";
 
@@ -8,7 +9,8 @@ const HeaderWrapper = styled("div")<{ th: Theme }>`
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 0 1rem;
   color: ${({ th }) => th.color.primary.text};
 `;
 
@@ -22,6 +24,7 @@ export const Header = () => {
   return (
     <HeaderWrapper th={theme}>
       <TitleWrapper th={theme}>Resume Builder</TitleWrapper>
+      <ThemeToggle />
     </HeaderWrapper>
   );
 };

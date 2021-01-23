@@ -4,11 +4,13 @@ import { Theme, darkColor, theme as initialTheme } from "./theme";
 export type ThemeContextProps = {
   theme: Theme;
   toggleTheme: () => void;
+  isDarkMode: boolean;
 };
 
 export const ThemeContext = React.createContext<ThemeContextProps>({
   theme: initialTheme,
   toggleTheme: () => null,
+  isDarkMode: false,
 });
 
 export const useTheme = () => {
@@ -67,7 +69,13 @@ export const ThemeContextProvider: FC<Props> = ({ children }) => {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme: makeTheme(theme), toggleTheme }}>
+    <ThemeContext.Provider
+      value={{
+        theme: makeTheme(theme),
+        toggleTheme,
+        isDarkMode: theme === "dark",
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );
