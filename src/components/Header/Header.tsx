@@ -23,7 +23,7 @@ export const Header = () => {
   const { theme } = useTheme();
   return (
     <HeaderWrapper th={theme}>
-      <TitleWrapper th={theme}>Resume Builder</TitleWrapper>
+      <TitleWrapper th={theme}>Cover Letter Builder</TitleWrapper>
       <ThemeToggle />
     </HeaderWrapper>
   );
