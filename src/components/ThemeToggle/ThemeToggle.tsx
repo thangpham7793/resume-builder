@@ -3,6 +3,8 @@ import { Theme } from "../../theme/theme";
 import styled from "styled-components";
 import { useTheme } from "../../theme/ThemeContext";
 
+// Adapted from https://dev.to/dcodeyt/creating-a-css-only-toggle-switch-5cg3
+
 const ToggleLabel = styled("label")`
   --width: 40px;
   --height: calc(var(--width) / 2);
