@@ -7,8 +7,9 @@ type IconProps = {
 };
 
 const IconWrapper = styled.div`
-  text-align: center;
   padding: 0.25rem;
+  display: flex;
+  align-items: center;
 `;
 
 export const Icon = ({ icon, ...props }: IconProps) => {

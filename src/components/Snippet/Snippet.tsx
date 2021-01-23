@@ -13,6 +13,7 @@ import { Icon } from "../Icon/Icon";
 import { IconType } from "react-icons/lib";
 import { Tag } from "../Tag/Tag";
 import styled from "styled-components";
+import { useSnippetContextDispatch } from "../../contexts/SnippetContext";
 import { useTheme } from "../../theme/ThemeContext";
 
 const getBackground = (lane: LaneType, theme: Theme) => {
@@ -53,7 +54,13 @@ const SnippetActionWrapper = styled("div")`
   justify-content: space-between;
 `;
 
-const ActionWrapper = styled("div")``;
+const ActionWrapper = styled("div")<{ th: Theme; isDarkMode: boolean }>`
+  &:hover {
+    background: ${(props) => props.th.color.primary.light};
+    border-radius: 50%;
+    border: 1px solid;
+  }
+`;
 
 const SnippetBodyWrapper = styled("div")<{ th: Theme }>`
   width: 100%;
@@ -61,10 +68,6 @@ const SnippetBodyWrapper = styled("div")<{ th: Theme }>`
   color: ${({ th }) => th.color.primary.text};
   cursor: grab;
   margin-bottom: 1rem;
-  &:hover {
-    transition: margin-bottom 0.5s;
-    margin-bottom: 1rem;
-  }
 `;
 
 const SnippetBody = styled("div")<{ th: Theme; isDarkMode: boolean }>`
@@ -73,10 +76,7 @@ const SnippetBody = styled("div")<{ th: Theme; isDarkMode: boolean }>`
     border: 1px dashed ${(props) => (props.isDarkMode ? "#fff" : "#000")};
     border-radius: 0.25rem;
     line-height: 1.3rem;
-    transition: margin-bottom 0.5s;
-    transition: padding 0.5s;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
+    padding: 0 0.5rem;
     font-weight: normal;
   }
 `;
@@ -96,6 +96,8 @@ export const Snippet = ({
   onDrop,
   lane,
 }: SnippetProps) => {
+  const { theme, isDarkMode } = useTheme();
+  const { deleteSnippet, updateSnippet } = useSnippetContextDispatch();
   const renderTags = (tags: string[]) =>
     tags.map((tag, i) => <Tag key={i} tag={tag} />);
 
@@ -106,23 +108,29 @@ export const Snippet = ({
   const actionProps = [
     {
       icon: () => <MdModeEdit />,
-    },
-    {
-      icon: () => <FaSave />,
+      onClick: () =>
+        updateSnippet({
+          updatedSnippet: {
+            id,
+            tags: ["updated", "success"],
+            body: "Updated!",
+            lane,
+          },
+        }),
     },
     {
       icon: () => <MdDelete />,
+      onClick: () => deleteSnippet({ id }),
     },
   ];
 
-  const renderActions = (actions: SnippetActionProps[]) =>
-    actions.map((a, i) => (
-      <ActionWrapper key={i}>
-        <Icon icon={a.icon} />
+  const renderActions = (actionProps: SnippetActionProps[]) =>
+    actionProps.map((props, i) => (
+      <ActionWrapper th={theme} isDarkMode={isDarkMode} key={i}>
+        <Icon {...props} />
       </ActionWrapper>
     ));
 
-  const { theme, isDarkMode } = useTheme();
   return (
     <SnippetWrapper
       th={theme}
@@ -132,7 +140,7 @@ export const Snippet = ({
       lane={lane}
     >
       <SnippetBodyWrapper th={theme} onClick={() => onClick(id)}>
-        <SnippetBody th={theme} isDarkMode={isDarkMode}>
+        <SnippetBody id="#rotating-border" th={theme} isDarkMode={isDarkMode}>
           <p>{body}</p>
         </SnippetBody>
       </SnippetBodyWrapper>

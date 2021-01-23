@@ -1,4 +1,8 @@
-import { deleteSnippetById, swapSnippets } from "./arrayHelpers";
+import {
+  deleteSnippetById,
+  swapSnippets,
+  updateSnippetInArray,
+} from "./arrayHelpers";
 
 import { LaneType } from "./../types";
 
@@ -69,6 +73,45 @@ describe("Array Helpers Test", () => {
 
       expect(deleted.length).toEqual(2);
       expect(deleted.findIndex((s) => s.id === toBeDelete.id)).toBe(-1);
+    });
+  });
+
+  describe("Update Snippet by Id", () => {
+    it("should update the snippet with the matching id", () => {
+      const snippets = [
+        {
+          id: "1",
+          body: "body",
+          lane: LaneType.Draft,
+          tags: [],
+        },
+        {
+          id: "2",
+          body: "body",
+          lane: LaneType.Draft,
+          tags: [],
+        },
+        {
+          id: "3",
+          body: "body",
+          lane: LaneType.Draft,
+          tags: [],
+        },
+      ];
+
+      const updatedSnippet = {
+        id: "3",
+        body: "new body",
+        lane: LaneType.Draft,
+        tags: ["new tag"],
+      };
+
+      const updated = updateSnippetInArray({
+        snippets,
+        updatedSnippet,
+      });
+
+      expect(updated[2]).toEqual(updatedSnippet);
     });
   });
 });

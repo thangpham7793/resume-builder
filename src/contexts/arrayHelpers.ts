@@ -20,11 +20,11 @@ export const swapSnippets = ({
   const currentSnippet = snippets[currentIndex];
   const droppedSnippet = snippets[droppedIndex];
 
-  const newSnippets = [...snippets];
+  const copy = [...snippets];
 
-  newSnippets[currentIndex] = droppedSnippet;
-  newSnippets[droppedIndex] = currentSnippet;
-  return newSnippets;
+  copy[currentIndex] = droppedSnippet;
+  copy[droppedIndex] = currentSnippet;
+  return copy;
 };
 
 type DeleteSnippetByIdProps = {
@@ -36,4 +36,20 @@ export const deleteSnippetById = ({ snippets, id }: DeleteSnippetByIdProps) => {
   const index = snippets.findIndex((s) => s.id === id);
   if (index === -1) return snippets;
   return [...snippets.slice(0, index), ...snippets.slice(index + 1)];
+};
+
+type UpdateSnippetProps = {
+  snippets: ISnippet[];
+  updatedSnippet: ISnippet;
+};
+
+export const updateSnippetInArray = ({
+  snippets,
+  updatedSnippet,
+}: UpdateSnippetProps) => {
+  const index = snippets.findIndex((s) => s.id === updatedSnippet.id);
+  if (index === -1) return snippets;
+  const copy = [...snippets];
+  copy[index] = updatedSnippet;
+  return copy;
 };

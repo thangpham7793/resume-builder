@@ -1,11 +1,17 @@
-import { ISnippet, LaneType } from "./../types";
-import { SnippetAction, SnippetActionType, SnippetState } from "./types";
 import {
+  DeleteSnippetPayload,
   SnippetDispatch,
   SnippetMovedPayload,
   SwapSnippetsOrderPayload,
+  UpdateSnippetPayload,
 } from "./types";
-import { deleteSnippetById, swapSnippets } from "./arrayHelpers";
+import { ISnippet, LaneType } from "./../types";
+import { SnippetAction, SnippetActionType, SnippetState } from "./types";
+import {
+  deleteSnippetById,
+  swapSnippets,
+  updateSnippetInArray,
+} from "./arrayHelpers";
 
 import React from "react";
 
@@ -21,6 +27,8 @@ export const initialState: SnippetState = {
 export const initialDispatch = {
   moveSnippet: (_: SnippetMovedPayload) => {},
   swapSnippetsOrder: (_: SwapSnippetsOrderPayload) => {},
+  deleteSnippet: (_: DeleteSnippetPayload) => {},
+  updateSnippet: (_: UpdateSnippetPayload) => {},
 };
 
 export const SnippetContext = React.createContext<SnippetState>(initialState);
@@ -89,6 +97,38 @@ export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
       });
       return draft;
 
+    case SnippetActionType.UPDATE:
+      const { updatedSnippet } = action.payload as UpdateSnippetPayload;
+      draft.draft = updateSnippetInArray({
+        snippets: draft.draft,
+        updatedSnippet,
+      });
+      draft.moveableSnippets = updateSnippetInArray({
+        snippets: draft.moveableSnippets,
+        updatedSnippet,
+      });
+      draft.snippets = updateSnippetInArray({
+        snippets: draft.snippets,
+        updatedSnippet,
+      });
+      return draft;
+
+    case SnippetActionType.DELETE:
+      const toDeleteId = (action.payload as DeleteSnippetPayload).id;
+      draft.draft = deleteSnippetById({
+        snippets: draft.draft,
+        id: toDeleteId,
+      });
+      draft.moveableSnippets = deleteSnippetById({
+        snippets: draft.moveableSnippets,
+        id: toDeleteId,
+      });
+      draft.snippets = deleteSnippetById({
+        snippets: draft.snippets,
+        id: toDeleteId,
+      });
+      return draft;
+
     case SnippetActionType.ERROR:
       draft.error = action.payload as Error;
       return draft;
@@ -132,5 +172,23 @@ export const swapSnippetsOrder = (
 ) =>
   dispatch({
     type: SnippetActionType.SWAP_SNIPPETS_ORDER,
+    payload,
+  });
+
+export const updateSnippet = (
+  dispatch: React.Dispatch<SnippetAction>,
+  payload: UpdateSnippetPayload
+) =>
+  dispatch({
+    type: SnippetActionType.UPDATE,
+    payload,
+  });
+
+export const deleteSnippet = (
+  dispatch: React.Dispatch<SnippetAction>,
+  payload: DeleteSnippetPayload
+) =>
+  dispatch({
+    type: SnippetActionType.DELETE,
     payload,
   });
