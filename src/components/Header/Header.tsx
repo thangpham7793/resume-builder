@@ -1,25 +1,27 @@
 import React from "react";
+import { Theme } from "../../theme/theme";
 import styled from "styled-components";
-import { theme } from "../../theme/theme";
+import { useTheme } from "../../theme/ThemeContext";
 
-const HeaderWrapper = styled.div`
-  background-color: ${theme.color.primary.main};
+const HeaderWrapper = styled("div")<{ th: Theme }>`
+  background-color: ${({ th }) => th.color.primary.main};
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${theme.color.primary.text};
+  color: ${({ th }) => th.color.primary.text};
 `;
 
-const TitleWrapper = styled.h1`
-  font-size: ${theme.text.fontSize.m};
+const TitleWrapper = styled("h1")<{ th: Theme }>`
+  font-size: ${({ th }) => th.text.fontSize.m};
   pointer-events: none;
 `;
 
 export const Header = () => {
+  const { theme } = useTheme();
   return (
-    <HeaderWrapper>
-      <TitleWrapper>Resume Builder</TitleWrapper>
+    <HeaderWrapper th={theme}>
+      <TitleWrapper th={theme}>Resume Builder</TitleWrapper>
     </HeaderWrapper>
   );
 };

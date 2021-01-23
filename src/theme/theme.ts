@@ -1,5 +1,47 @@
 const baseFontSize = 1;
 
+type Color = {
+  main: string;
+  light: string;
+  dark: string;
+  text: string;
+};
+
+type FontSize = {
+  xs: string;
+  ss: string;
+  s: string;
+  m: string;
+  l: string;
+  xl: string;
+};
+
+export type Theme = {
+  boxShadow: string;
+  color: {
+    primary: Color;
+    secondary: Color;
+  };
+  text: {
+    fontSize: FontSize;
+  };
+};
+
+export const darkColor = {
+  primary: {
+    main: "#022f43",
+    light: "#181a1b",
+    dark: "#181a1b",
+    text: "#e8e6e3",
+  },
+  secondary: {
+    main: "#064273",
+    light: "#181a1b",
+    dark: "#181a1b",
+    text: "#e8e6e3",
+  },
+};
+
 export const theme = {
   boxShadow:
     "rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;",

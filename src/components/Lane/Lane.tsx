@@ -8,21 +8,25 @@ import React, { DragEventHandler } from "react";
 
 import { Snippet } from "../Snippet/Snippet";
 import { SnippetData } from "../constants";
+import { Theme } from "../../theme/theme";
 import styled from "styled-components";
-import { theme } from "../../theme/theme";
 import { useSnippetContextDispatch } from "../../contexts/SnippetContext";
+import { useTheme } from "../../theme/ThemeContext";
 
 const getMaxWidth = (lane: LaneType) =>
   lane === LaneType.Draft ? `65vw` : `30vw`;
 
-const LaneWrapper = styled("div")<{ lane: LaneType }>`
+const LaneWrapper = styled("div")<{
+  lane: LaneType;
+  th: Theme;
+}>`
   list-style: none;
   text-align: left;
   padding: 0;
   &:not(:last-child) {
     margin-right: 1rem;
   }
-  background: ${theme.color.primary.light};
+  background: ${({ th }) => th.color.primary.light};
   border-radius: 20px;
   min-height: 50vh;
   min-width: 30vw;
@@ -36,6 +40,7 @@ const LaneWrapper = styled("div")<{ lane: LaneType }>`
     }
     max-width: 100vw;
   }
+  color: ${({ th }) => th.color.primary.text};
 `;
 
 const LaneTitleWrapper = styled.div`
@@ -89,9 +94,9 @@ export const Lane = ({
       droppedId: id,
     });
   };
-
+  const { theme } = useTheme();
   return (
-    <LaneWrapper lane={lane} onDragOver={onDragOver} onDrop={onDrop}>
+    <LaneWrapper th={theme} lane={lane} onDragOver={onDragOver} onDrop={onDrop}>
       <LaneTitleWrapper>
         <LaneTitle>
           <h3>{lane}</h3>

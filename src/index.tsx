@@ -1,15 +1,19 @@
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+
+import App from "./containers/App";
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./containers/App";
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
-import reportWebVitals from "./reportWebVitals";
 import { SnippetContextProvider } from "./contexts/SnippetContextProvider";
+import { ThemeContextProvider } from "./theme/ThemeContext";
+import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>
-    <SnippetContextProvider>
-      <App />
-    </SnippetContextProvider>
+    <ThemeContextProvider>
+      <SnippetContextProvider>
+        <App />
+      </SnippetContextProvider>
+    </ThemeContextProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

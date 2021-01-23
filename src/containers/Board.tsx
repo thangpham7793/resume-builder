@@ -14,6 +14,7 @@ import faker from "faker";
 import { saveAs } from "file-saver";
 import styled from "styled-components";
 import { theme } from "../theme/theme";
+import { useTheme } from "../theme/ThemeContext";
 
 const BoardWrapper = styled.div`
   justify-content: space-around;
@@ -70,6 +71,7 @@ export const Board = () => {
     saveAs(blob, "my-cover-letter.docx");
   };
 
+  const { toggleTheme } = useTheme();
   const convertIcons = [
     {
       key: faker.random.uuid(),
@@ -79,7 +81,7 @@ export const Board = () => {
     {
       key: faker.random.uuid(),
       icon: () => <FaFilePdf fontSize={theme.text.fontSize.xl} />,
-      onClick: () => console.log("convert"),
+      onClick: () => toggleTheme(),
     },
   ];
 
