@@ -1,8 +1,8 @@
-import React from "react";
 import { IconType } from "react-icons/lib";
+import React from "react";
 import styled from "styled-components";
 
-type ConvertIconProps = {
+type IconProps = {
   icon: IconType;
 };
 
@@ -11,7 +11,7 @@ const IconWrapper = styled.div`
   padding: 0.25rem;
 `;
 
-export const ConvertIcon = ({ icon, ...props }: ConvertIconProps) => {
+export const Icon = ({ icon, ...props }: IconProps) => {
   const Icon = icon;
   return (
     <IconWrapper {...props}>

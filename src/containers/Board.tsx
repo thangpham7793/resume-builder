@@ -7,7 +7,7 @@ import {
   useSnippetContextDispatch,
 } from "../contexts/SnippetContext";
 
-import { ConvertIcon } from "../components/ConvertIcon/ConvertIcon";
+import { Icon } from "../components/Icon/Icon";
 import { Lane } from "../components/Lane/Lane";
 import { SnippetData } from "../components/constants";
 import faker from "faker";
@@ -95,7 +95,7 @@ export const Board = () => {
   ];
 
   const renderIcons = (iconProps: typeof convertIcons) =>
-    iconProps.map((props) => <ConvertIcon {...props} />);
+    iconProps.map((props) => <Icon {...props} />);
 
   return (
     <BoardWrapper>
