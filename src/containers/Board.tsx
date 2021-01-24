@@ -1,6 +1,10 @@
-import { Document, Packer, Paragraph } from "docx";
 import { FaFilePdf, FaFileWord } from "react-icons/fa";
-import { ISnippet, LaneType, OnSnippetClickedHandler } from "../types";
+import {
+  ISnippet,
+  LaneType,
+  OnSnippetClickedHandler,
+  OnSnippetDraggedHandler,
+} from "../types";
 import React, { DragEventHandler } from "react";
 import {
   useSnippetContext,
@@ -9,11 +13,11 @@ import {
 
 import { Icon } from "../components/Icon/Icon";
 import { Lane } from "../components/Lane/Lane";
+import { Snippet } from "../components/Snippet/Snippet";
 import { SnippetData } from "../components/constants";
+import { convertToDoc } from "../services/convertToDoc";
 import faker from "faker";
-import { saveAs } from "file-saver";
 import styled from "styled-components";
-import { styles } from "./docStyles";
 import { theme } from "../theme/theme";
 import { useTheme } from "../theme/ThemeContext";
 
@@ -33,7 +37,7 @@ const Alert = styled.div`
 
 export const Board = () => {
   const { loading, error, moveableSnippets, draft } = useSnippetContext();
-  const { moveSnippet } = useSnippetContextDispatch();
+  const { moveSnippet, swapSnippetsOrder } = useSnippetContextDispatch();
 
   // factoryFunction for onDrop since it needs the title of the target lane
   const createOnSnippetDroppedHandler = (
@@ -64,22 +68,6 @@ export const Board = () => {
     };
   };
 
-  const convertToDoc = async (snippets: ISnippet[]) => {
-    const doc = new Document({
-      styles,
-    });
-    const paras = snippets.map(
-      (s) =>
-        new Paragraph({
-          text: s.body.trim(),
-          style: "normalPara",
-        })
-    );
-    doc.addSection({ children: paras });
-    const blob = await Packer.toBlob(doc);
-    saveAs(blob, "my-cover-letter.docx");
-  };
-
   const { toggleTheme } = useTheme();
   const convertIcons = [
     {
@@ -97,6 +85,35 @@ export const Board = () => {
   const renderIcons = (iconProps: typeof convertIcons) =>
     iconProps.map((props) => <Icon {...props} />);
 
+  const onDragStart: OnSnippetDraggedHandler = ({ event, id, currentLane }) => {
+    // text/plain is treated like a link
+    event.dataTransfer.setData(
+      SnippetData,
+      JSON.stringify({ id, currentLane })
+    );
+  };
+
+  const createOnTicketDroppedToSwapOrder = (
+    currentId: string
+  ): DragEventHandler => (event) => {
+    const { id } = JSON.parse(event.dataTransfer.getData(SnippetData));
+    swapSnippetsOrder({
+      currentId,
+      droppedId: id,
+    });
+  };
+
+  const renderSnippets = (snippets: ISnippet[], lane: LaneType) =>
+    snippets.map((snippet) => (
+      <Snippet
+        key={snippet.id}
+        {...snippet}
+        onDragStart={onDragStart}
+        onClick={createOnSnippetClickedHandler(lane)}
+        onDrop={createOnTicketDroppedToSwapOrder(snippet.id)}
+      />
+    ));
+
   return (
     <BoardWrapper>
       {error ? (
@@ -104,20 +121,22 @@ export const Board = () => {
       ) : (
         <>
           <Lane
-            snippets={moveableSnippets}
+            snippets={
+              loading
+                ? "Fetching Snippets"
+                : renderSnippets(moveableSnippets, LaneType.Snippet)
+            }
             key={LaneType.Snippet}
             lane={LaneType.Snippet}
-            loading={loading}
             onDrop={createOnSnippetDroppedHandler(LaneType.Snippet)}
-            onSnippetClicked={createOnSnippetClickedHandler(LaneType.Snippet)}
           />
           <Lane
-            snippets={draft}
+            snippets={
+              loading ? "Fetching Draft" : renderSnippets(draft, LaneType.Draft)
+            }
             key={LaneType.Draft}
             lane={LaneType.Draft}
-            loading={loading}
             onDrop={createOnSnippetDroppedHandler(LaneType.Draft)}
-            onSnippetClicked={createOnSnippetClickedHandler(LaneType.Draft)}
             icons={renderIcons(convertIcons)}
           />
         </>

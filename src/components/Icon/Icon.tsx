@@ -10,6 +10,7 @@ const IconWrapper = styled.div`
   padding: 0.25rem;
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 export const Icon = ({ icon, ...props }: IconProps) => {

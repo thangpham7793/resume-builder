@@ -1,16 +1,9 @@
-import {
-  ISnippet,
-  LaneType,
-  OnSnippetClickedHandler,
-  OnSnippetDraggedHandler,
-} from "../../types";
 import React, { DragEventHandler } from "react";
 
-import { Snippet } from "../Snippet/Snippet";
+import { LaneType } from "../../types";
 import { SnippetData } from "../constants";
 import { Theme } from "../../theme/theme";
 import styled from "styled-components";
-import { useSnippetContextDispatch } from "../../contexts/SnippetContext";
 import { useTheme } from "../../theme/ThemeContext";
 
 const getMaxWidth = (lane: LaneType) =>
@@ -52,48 +45,26 @@ const LaneTitleWrapper = styled.div`
 const LaneTitle = styled.div``;
 
 const SnippetsContainer = styled.div``;
+const IconsContainer = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+`;
 
 interface LaneProps {
   lane: LaneType;
-  snippets: ISnippet[];
-  loading: boolean;
   onDrop: DragEventHandler;
-  onSnippetClicked: OnSnippetClickedHandler;
   icons?: JSX.Element[];
+  snippets: JSX.Element[] | string;
 }
 
-export const Lane = ({
-  lane,
-  snippets,
-  loading,
-  onDrop,
-  onSnippetClicked,
-  icons,
-}: LaneProps) => {
-  const onDragStart: OnSnippetDraggedHandler = ({ event, id, currentLane }) => {
-    // text/plain is treated like a link
-    event.dataTransfer.setData(
-      SnippetData,
-      JSON.stringify({ id, currentLane })
-    );
-  };
-
+export const Lane = ({ lane, onDrop, icons, snippets }: LaneProps) => {
   const onDragOver: DragEventHandler = (event) => {
     if (event.dataTransfer.types.includes(SnippetData.toLowerCase())) {
       event.preventDefault();
     }
   };
 
-  const { swapSnippetsOrder } = useSnippetContextDispatch();
-  const createOnTicketDroppedToSwapOrder = (
-    currentId: string
-  ): DragEventHandler => (event) => {
-    const { id } = JSON.parse(event.dataTransfer.getData(SnippetData));
-    swapSnippetsOrder({
-      currentId,
-      droppedId: id,
-    });
-  };
   const { theme } = useTheme();
   return (
     <LaneWrapper th={theme} lane={lane} onDragOver={onDragOver} onDrop={onDrop}>
@@ -101,22 +72,9 @@ export const Lane = ({
         <LaneTitle>
           <h3>{lane}</h3>
         </LaneTitle>
-        {icons && icons}
+        <IconsContainer>{icons}</IconsContainer>
       </LaneTitleWrapper>
-
-      <SnippetsContainer>
-        {loading
-          ? "Fetching Snippets"
-          : snippets.map((snippet) => (
-              <Snippet
-                key={snippet.id}
-                {...snippet}
-                onDragStart={onDragStart}
-                onClick={onSnippetClicked}
-                onDrop={createOnTicketDroppedToSwapOrder(snippet.id)}
-              />
-            ))}
-      </SnippetsContainer>
+      <SnippetsContainer>{snippets}</SnippetsContainer>
     </LaneWrapper>
   );
 };

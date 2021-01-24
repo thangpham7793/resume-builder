@@ -1,3 +1,4 @@
+import { ActionIcon, SnippetActionProps } from "../ActionIcon/ActionIcon";
 import {
   ISnippet,
   LaneType,
@@ -8,7 +9,6 @@ import { MdDelete, MdModeEdit } from "react-icons/md";
 import React, { DragEventHandler } from "react";
 import { Theme, effect } from "../../theme/theme";
 
-import { FaSave } from "react-icons/fa";
 import { Icon } from "../Icon/Icon";
 import { IconType } from "react-icons/lib";
 import { Tag } from "../Tag/Tag";
@@ -98,12 +98,10 @@ export const Snippet = ({
 }: SnippetProps) => {
   const { theme, isDarkMode } = useTheme();
   const { deleteSnippet, updateSnippet } = useSnippetContextDispatch();
+
+  // tags and actions are contained inside snippet, so probably not a good idea to lift them up to Board container.
   const renderTags = (tags: string[]) =>
     tags.map((tag, i) => <Tag key={i} tag={tag} />);
-
-  type SnippetActionProps = {
-    icon: IconType;
-  };
 
   const actionProps = [
     {
@@ -125,11 +123,7 @@ export const Snippet = ({
   ];
 
   const renderActions = (actionProps: SnippetActionProps[]) =>
-    actionProps.map((props, i) => (
-      <ActionWrapper th={theme} isDarkMode={isDarkMode} key={i}>
-        <Icon {...props} />
-      </ActionWrapper>
-    ));
+    actionProps.map((props, i) => <ActionIcon {...props} key={i} />);
 
   return (
     <SnippetWrapper
