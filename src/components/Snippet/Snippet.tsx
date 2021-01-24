@@ -100,7 +100,7 @@ export const Snippet = ({
 
   const actionProps = [
     {
-      icon: () => <MdModeEdit />,
+      icon: <MdModeEdit />,
       onClick: () => {
         openAndSetModalContent(
           <SnippetForm
@@ -116,7 +116,7 @@ export const Snippet = ({
       },
     },
     {
-      icon: () => <MdDelete />,
+      icon: <MdDelete />,
       onClick: () => deleteSnippet({ id }),
     },
   ];

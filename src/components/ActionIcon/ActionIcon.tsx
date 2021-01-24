@@ -13,7 +13,7 @@ const ActionWrapper = styled("div")<{ th: Theme; isDarkMode: boolean }>`
 `;
 
 export type SnippetActionProps = {
-  icon: () => JSX.Element;
+  icon: React.ReactNode;
   onClick: () => void;
 };
 

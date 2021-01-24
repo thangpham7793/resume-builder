@@ -5,6 +5,7 @@ import { Header } from "../components/Header/Header";
 import Modal from "react-modal";
 import React from "react";
 import { Theme } from "../theme/theme";
+import { actionConfirmedByUser } from "../hooks/actionConfirmedByUser";
 import { useModalContext } from "../contexts/ModalContext";
 import { useTheme } from "../theme/ThemeContext";
 
@@ -34,6 +35,10 @@ const AppWrapper = styled.div`
 
 Modal.setAppElement("#root");
 function App() {
+  if (process.env.NODE_ENV === "production") {
+    window.onbeforeunload = () => false;
+  }
+
   const { theme } = useTheme();
   const { isModalOpen, modalContent } = useModalContext();
   return (

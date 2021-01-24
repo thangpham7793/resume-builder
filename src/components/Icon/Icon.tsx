@@ -3,22 +3,21 @@ import React from "react";
 import styled from "styled-components";
 
 type IconProps = {
-  icon: IconType;
+  icon: React.ReactNode;
   isDisabled?: boolean;
 };
 
-const IconWrapper = styled.div`
+const IconWrapper = styled.div<{ isDisabled: boolean }>`
   padding: 0.25rem;
   display: flex;
   align-items: center;
-  cursor: pointer;
+  cursor: ${(props) => (props.isDisabled ? "default" : "pointer")};
 `;
 
 export const Icon = ({ icon, isDisabled = false, ...props }: IconProps) => {
-  const Icon = icon;
-  return isDisabled ? null : (
-    <IconWrapper {...props}>
-      <Icon />
+  return (
+    <IconWrapper isDisabled={isDisabled} {...props}>
+      {icon}
     </IconWrapper>
   );
 };

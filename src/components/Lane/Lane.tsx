@@ -49,6 +49,11 @@ const IconsContainer = styled.div`
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+  margin-left: 2rem;
+
+  @media only screen and (max-width: 450px) {
+    margin-left: 0.25rem;
+  }
 `;
 
 interface LaneProps {

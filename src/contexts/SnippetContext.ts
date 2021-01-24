@@ -53,7 +53,10 @@ export const useEditHistory = () => {
   return { canUndo: stack.length > 1, canRedo: popped.length > 0 };
 };
 
-// reducer
+const saveSnapshot = (draft: MementoSnippetState) => {
+  draft.history.stack = [...draft.history.stack, draft.currentState];
+};
+
 export const snippetReducer = (
   draft: MementoSnippetState,
   action: SnippetAction
@@ -82,10 +85,9 @@ export const snippetReducer = (
     return draft;
   }
 
-  // save snapshot on any actual state changes
-  draft.history.stack = [...draft.history.stack, draft.currentState];
   switch (action.type) {
     case SnippetActionType.HYDRATE:
+      saveSnapshot(draft);
       const snippets = action.payload as ISnippet[];
       draft.currentState.snippets = snippets.filter(
         (s) => s.lane === LaneType.Snippet
@@ -98,6 +100,7 @@ export const snippetReducer = (
       return draft;
 
     case SnippetActionType.ADD:
+      saveSnapshot(draft);
       const newSnippet = {
         ...(action.payload as AddSnippetPayload),
         id: faker.random.uuid(),
@@ -116,6 +119,7 @@ export const snippetReducer = (
 
       if (newLane === currentLane) return draft;
 
+      saveSnapshot(draft);
       if (newLane === LaneType.Draft) {
         for (const snippet of draft.currentState.moveableSnippets) {
           if (snippet.id === id) {
@@ -147,6 +151,7 @@ export const snippetReducer = (
       return draft;
 
     case SnippetActionType.SWAP:
+      saveSnapshot(draft);
       const {
         currentId,
         droppedId,
@@ -159,6 +164,7 @@ export const snippetReducer = (
       return draft;
 
     case SnippetActionType.UPDATE:
+      saveSnapshot(draft);
       const { updatedSnippet } = action.payload as UpdateSnippetPayload;
       draft.currentState.draft = updateSnippetInArray({
         snippets: draft.currentState.draft,
@@ -175,6 +181,7 @@ export const snippetReducer = (
       return draft;
 
     case SnippetActionType.DELETE:
+      saveSnapshot(draft);
       const toDeleteId = (action.payload as DeleteSnippetPayload).id;
       draft.currentState.draft = deleteSnippetById({
         snippets: draft.currentState.draft,

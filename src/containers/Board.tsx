@@ -13,6 +13,7 @@ import {
 } from "../contexts/SnippetContext";
 
 import { Icon } from "../components/Icon/Icon";
+import { IconType } from "react-icons/lib";
 import { Lane } from "../components/Lane/Lane";
 import { MdLibraryAdd } from "react-icons/md";
 import { Snippet } from "../components/Snippet/Snippet";
@@ -76,17 +77,48 @@ export const Board = () => {
     };
   };
 
+  type ToggleableIconProps = {
+    fontSize?: string;
+    Icon: IconType;
+    isDisabled: boolean;
+  };
+
+  const ToggleableIcon = ({
+    isDisabled,
+    fontSize = theme.text.fontSize.xl,
+    Icon,
+  }: ToggleableIconProps) => (
+    <Icon
+      fontSize={fontSize}
+      color={isDisabled ? theme.color.primary.light : ""}
+    />
+  );
+
   const { toggleTheme, theme } = useTheme();
   const convertIconsProps = [
     {
       key: faker.random.uuid(),
-      icon: () => <FaFileWord fontSize={theme.text.fontSize.xl} />,
+      icon: (
+        <ToggleableIcon
+          Icon={({ fontSize, color }) => (
+            <FaFileWord fontSize={fontSize} color={color} />
+          )}
+          isDisabled={draft.length === 0}
+        />
+      ),
       onClick: () => convertToDoc(draft),
       isDisabled: draft.length === 0,
     },
     {
       key: faker.random.uuid(),
-      icon: () => <FaFilePdf fontSize={theme.text.fontSize.xl} />,
+      icon: (
+        <ToggleableIcon
+          Icon={({ fontSize, color }) => (
+            <FaFilePdf fontSize={fontSize} color={color} />
+          )}
+          isDisabled={draft.length === 0}
+        />
+      ),
       onClick: () => toggleTheme(),
       isDisabled: draft.length === 0,
     },
@@ -96,13 +128,29 @@ export const Board = () => {
   const editHistoryIconsProps = [
     {
       key: faker.random.uuid(),
-      icon: () => <FaUndo fontSize={theme.text.fontSize.l} />,
+      icon: (
+        <ToggleableIcon
+          Icon={({ fontSize, color }) => (
+            <FaUndo fontSize={fontSize} color={color} />
+          )}
+          fontSize={theme.text.fontSize.l}
+          isDisabled={!canUndo}
+        />
+      ),
       onClick: () => canUndo && undo(null),
       isDisabled: !canUndo,
     },
     {
       key: faker.random.uuid(),
-      icon: () => <FaRedo fontSize={theme.text.fontSize.l} />,
+      icon: (
+        <ToggleableIcon
+          Icon={({ fontSize, color }) => (
+            <FaRedo fontSize={fontSize} color={color} />
+          )}
+          fontSize={theme.text.fontSize.l}
+          isDisabled={draft.length === 0}
+        />
+      ),
       onClick: () => canRedo && redo(null),
       isDisabled: !canRedo,
     },
@@ -112,7 +160,7 @@ export const Board = () => {
   const addNewIconProps = [
     {
       key: faker.random.uuid(),
-      icon: () => <MdLibraryAdd fontSize={theme.text.fontSize.xl} />,
+      icon: <MdLibraryAdd fontSize={theme.text.fontSize.xl} />,
       onClick: () => openAndSetModalContent(<SnippetForm />),
       isDisabled: false,
     },
