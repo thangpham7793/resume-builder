@@ -54,7 +54,7 @@ const IconsContainer = styled.div`
 interface LaneProps {
   lane: LaneType;
   onDrop: DragEventHandler;
-  icons?: JSX.Element[];
+  icons: JSX.Element[];
   snippets: JSX.Element[] | string;
 }
 

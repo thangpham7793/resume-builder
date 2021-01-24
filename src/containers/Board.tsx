@@ -13,12 +13,15 @@ import {
 
 import { Icon } from "../components/Icon/Icon";
 import { Lane } from "../components/Lane/Lane";
+import { MdLibraryAdd } from "react-icons/md";
 import { Snippet } from "../components/Snippet/Snippet";
 import { SnippetData } from "../components/constants";
+import { SnippetForm } from "./SnippetForm";
 import { convertToDoc } from "../services/convertToDoc";
 import faker from "faker";
 import styled from "styled-components";
 import { theme } from "../theme/theme";
+import { useModalContext } from "../contexts/ModalContext";
 import { useTheme } from "../theme/ThemeContext";
 
 const BoardWrapper = styled.div`
@@ -69,7 +72,7 @@ export const Board = () => {
   };
 
   const { toggleTheme } = useTheme();
-  const convertIcons = [
+  const convertIconsProps = [
     {
       key: faker.random.uuid(),
       icon: () => <FaFileWord fontSize={theme.text.fontSize.xl} />,
@@ -82,7 +85,16 @@ export const Board = () => {
     },
   ];
 
-  const renderIcons = (iconProps: typeof convertIcons) =>
+  const { openAndSetModalContent } = useModalContext();
+  const addNewIconProps = [
+    {
+      key: faker.random.uuid(),
+      icon: () => <MdLibraryAdd fontSize={theme.text.fontSize.xl} />,
+      onClick: () => openAndSetModalContent(<SnippetForm />),
+    },
+  ];
+
+  const renderIcons = (iconProps: typeof convertIconsProps) =>
     iconProps.map((props) => <Icon {...props} />);
 
   const onDragStart: OnSnippetDraggedHandler = ({ event, id, currentLane }) => {
@@ -129,6 +141,7 @@ export const Board = () => {
             key={LaneType.Snippet}
             lane={LaneType.Snippet}
             onDrop={createOnSnippetDroppedHandler(LaneType.Snippet)}
+            icons={renderIcons(addNewIconProps)}
           />
           <Lane
             snippets={
@@ -137,7 +150,7 @@ export const Board = () => {
             key={LaneType.Draft}
             lane={LaneType.Draft}
             onDrop={createOnSnippetDroppedHandler(LaneType.Draft)}
-            icons={renderIcons(convertIcons)}
+            icons={renderIcons(convertIconsProps)}
           />
         </>
       )}

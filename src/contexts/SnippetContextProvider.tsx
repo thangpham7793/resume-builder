@@ -2,6 +2,7 @@ import React, { FC, useEffect } from "react";
 import {
   SnippetContext,
   SnippetDispatchContext,
+  addSnippet,
   deleteSnippet,
   hydrateState,
   initialState,
@@ -41,6 +42,7 @@ export const SnippetContextProvider: FC<Props> = ({ children }) => {
   return (
     <SnippetDispatchContext.Provider
       value={{
+        addSnippet: withDispatch(addSnippet),
         moveSnippet: withDispatch(moveSnippet),
         swapSnippetsOrder: withDispatch(swapSnippetsOrder),
         deleteSnippet: withDispatch(deleteSnippet),

@@ -1,4 +1,5 @@
 import {
+  AddSnippetPayload,
   DeleteSnippetPayload,
   SnippetDispatch,
   SnippetMovedPayload,
@@ -14,6 +15,7 @@ import {
 } from "./arrayHelpers";
 
 import React from "react";
+import faker from "faker";
 
 // initial states
 export const initialState: SnippetState = {
@@ -24,20 +26,13 @@ export const initialState: SnippetState = {
   draft: [],
 };
 
-export const initialDispatch = {
-  moveSnippet: (_: SnippetMovedPayload) => {},
-  swapSnippetsOrder: (_: SwapSnippetsOrderPayload) => {},
-  deleteSnippet: (_: DeleteSnippetPayload) => {},
-  updateSnippet: (_: UpdateSnippetPayload) => {},
-};
-
 export const SnippetContext = React.createContext<SnippetState>(initialState);
 export const useSnippetContextDispatch = () =>
-  React.useContext(SnippetDispatchContext);
+  React.useContext(SnippetDispatchContext) as SnippetDispatch;
 
 export const useSnippetContext = () => React.useContext(SnippetContext);
-export const SnippetDispatchContext = React.createContext<SnippetDispatch>(
-  initialDispatch
+export const SnippetDispatchContext = React.createContext<SnippetDispatch | null>(
+  null
 );
 
 // reducer
@@ -50,6 +45,16 @@ export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
       draft.draft = snippets.filter((s) => s.lane === LaneType.Draft);
       draft.moveableSnippets = [...draft.snippets];
       draft.loading = false;
+      return draft;
+
+    case SnippetActionType.ADD:
+      const newSnippet = {
+        ...(action.payload as AddSnippetPayload),
+        id: faker.random.uuid(),
+        lane: LaneType.Snippet,
+      };
+      draft.snippets.unshift(newSnippet);
+      draft.moveableSnippets.unshift(newSnippet);
       return draft;
 
     case SnippetActionType.MOVE_TO_NEW_LANE:
@@ -85,7 +90,7 @@ export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
       }
       return draft;
 
-    case SnippetActionType.SWAP_SNIPPETS_ORDER:
+    case SnippetActionType.SWAP:
       const {
         currentId,
         droppedId,
@@ -166,12 +171,21 @@ export const raiseFetchSnippetError = (
     payload,
   });
 
+export const addSnippet = (
+  dispatch: React.Dispatch<SnippetAction>,
+  payload: AddSnippetPayload
+) =>
+  dispatch({
+    type: SnippetActionType.ADD,
+    payload,
+  });
+
 export const swapSnippetsOrder = (
   dispatch: React.Dispatch<SnippetAction>,
   payload: SwapSnippetsOrderPayload
 ) =>
   dispatch({
-    type: SnippetActionType.SWAP_SNIPPETS_ORDER,
+    type: SnippetActionType.SWAP,
     payload,
   });
 

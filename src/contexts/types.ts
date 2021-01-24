@@ -4,7 +4,8 @@ export enum SnippetActionType {
   HYDRATE = "HYDRATE",
   MOVE_TO_NEW_LANE = "MOVE_TO_NEW_LANE",
   ERROR = "ERROR",
-  SWAP_SNIPPETS_ORDER = "SWAP_SNIPPETS_ORDER",
+  SWAP = "SWAP",
+  ADD = "ADD",
   DELETE = "DELETE",
   UPDATE = "UPDATE",
 }
@@ -14,6 +15,7 @@ export type SnippetMovedPayload = {
   currentLane: LaneType;
   id: string;
 };
+export type AddSnippetPayload = { body: string; tags: string[] | undefined };
 export type SwapSnippetsOrderPayload = { currentId: string; droppedId: string };
 export type UpdateSnippetPayload = { updatedSnippet: ISnippet };
 export type DeleteSnippetPayload = { id: string };
@@ -23,6 +25,7 @@ export type SnippetActionPayload =
   | Error
   | SnippetMovedPayload
   | SwapSnippetsOrderPayload
+  | AddSnippetPayload
   | DeleteSnippetPayload
   | UpdateSnippetPayload;
 
@@ -45,6 +48,7 @@ export type SnippetState = {
 };
 
 export type SnippetDispatch = {
+  addSnippet: (payload: AddSnippetPayload) => void;
   moveSnippet: (payload: SnippetMovedPayload) => void;
   swapSnippetsOrder: (payload: SwapSnippetsOrderPayload) => void;
   updateSnippet: (payload: UpdateSnippetPayload) => void;

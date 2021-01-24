@@ -9,6 +9,7 @@ import { MdDelete, MdModeEdit } from "react-icons/md";
 import React, { DragEventHandler } from "react";
 import { Theme, effect } from "../../theme/theme";
 
+import { SnippetForm } from "../../containers/SnippetForm";
 import { Tag } from "../Tag/Tag";
 import styled from "styled-components";
 import { useModalContext } from "../../contexts/ModalContext";
@@ -78,14 +79,6 @@ interface SnippetProps extends ISnippet {
   onDrop: DragEventHandler;
 }
 
-// updateSnippet({
-//   updatedSnippet: {
-//     id,
-//     tags: ["updated", "success"],
-//     body: "Updated!",
-//     lane,
-//   },
-// }),
 export const Snippet = ({
   body,
   id,
@@ -99,17 +92,27 @@ export const Snippet = ({
   const { deleteSnippet, updateSnippet } = useSnippetContextDispatch();
 
   // tags and actions are contained inside snippet, so probably not a good idea to lift them up to Board container.
+
   const renderTags = (tags: string[]) =>
     tags.map((tag, i) => <Tag key={i} tag={tag} />);
 
-  const { openModal, setModalContent } = useModalContext();
+  const { closeModal, openAndSetModalContent } = useModalContext();
 
   const actionProps = [
     {
       icon: () => <MdModeEdit />,
       onClick: () => {
-        openModal();
-        setModalContent(<div>{JSON.stringify({ id, lane, body, tags })}</div>);
+        openAndSetModalContent(
+          <SnippetForm
+            snippet={{ id, tags, body, lane }}
+            onConfirmClick={(updatedSnippet: ISnippet) => {
+              updateSnippet({
+                updatedSnippet,
+              });
+              closeModal();
+            }}
+          />
+        );
       },
     },
     {

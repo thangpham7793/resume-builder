@@ -6,6 +6,7 @@ type ModalContextProps = {
   openModal: () => void;
   closeModal: () => void;
   setModalContent: (el: JSX.Element) => void;
+  openAndSetModalContent: (el: JSX.Element) => void;
 };
 
 const ModalContext = React.createContext<ModalContextProps>({
@@ -14,6 +15,7 @@ const ModalContext = React.createContext<ModalContextProps>({
   closeModal: () => {},
   modalContent: <></>,
   setModalContent: (el: JSX.Element) => {},
+  openAndSetModalContent: (el: JSX.Element) => {},
 });
 
 type Props = {
@@ -30,6 +32,10 @@ export const ModalContextProvider = ({ children }: Props) => {
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const openAndSetModalContent = (el: JSX.Element) => {
+    openModal();
+    setModalContent(el);
+  };
   return (
     <ModalContext.Provider
       value={{
@@ -37,6 +43,7 @@ export const ModalContextProvider = ({ children }: Props) => {
         modalContent,
         closeModal,
         openModal,
+        openAndSetModalContent,
         setModalContent: (el: JSX.Element) => setModalContent(el),
       }}
     >
