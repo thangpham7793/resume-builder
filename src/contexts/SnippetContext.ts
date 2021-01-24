@@ -1,6 +1,7 @@
 import {
   AddSnippetPayload,
   DeleteSnippetPayload,
+  MementoSnippetState,
   SnippetDispatch,
   SnippetMovedPayload,
   SwapSnippetsOrderPayload,
@@ -26,25 +27,74 @@ export const initialState: SnippetState = {
   draft: [],
 };
 
-export const SnippetContext = React.createContext<SnippetState>(initialState);
+export const mementoSnippetState: MementoSnippetState = {
+  currentState: initialState,
+  history: {
+    stack: [],
+    popped: [],
+  },
+};
+
+export const SnippetContext = React.createContext<MementoSnippetState>(
+  mementoSnippetState
+);
+
 export const useSnippetContextDispatch = () =>
   React.useContext(SnippetDispatchContext) as SnippetDispatch;
 
-export const useSnippetContext = () => React.useContext(SnippetContext);
+export const useSnippetContext = () =>
+  React.useContext(SnippetContext).currentState;
 export const SnippetDispatchContext = React.createContext<SnippetDispatch | null>(
   null
 );
 
+export const useEditHistory = () => {
+  const { stack, popped } = React.useContext(SnippetContext).history;
+  return { canUndo: stack.length > 1, canRedo: popped.length > 0 };
+};
+
 // reducer
-export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
-  // console.log(action);
+export const snippetReducer = (
+  draft: MementoSnippetState,
+  action: SnippetAction
+) => {
+  if (action.type === SnippetActionType.UNDO) {
+    if (draft.history.stack.length > 1) {
+      draft.history.popped.push(draft.currentState);
+      draft.history.stack.pop();
+      draft.currentState = draft.history.stack[
+        draft.history.stack.length - 1
+      ] as SnippetState;
+    }
+    return draft;
+  }
+
+  if (action.type === SnippetActionType.FORWARD) {
+    if (draft.history.popped.length > 0) {
+      draft.currentState = draft.history.popped.pop() as SnippetState;
+      draft.history.stack.push(draft.currentState);
+    }
+    return draft;
+  }
+
+  if (action.type === SnippetActionType.ERROR) {
+    draft.currentState.error = action.payload as Error;
+    return draft;
+  }
+
+  // save snapshot on any actual state changes
+  draft.history.stack = [...draft.history.stack, draft.currentState];
   switch (action.type) {
     case SnippetActionType.HYDRATE:
       const snippets = action.payload as ISnippet[];
-      draft.snippets = snippets.filter((s) => s.lane === LaneType.Snippet);
-      draft.draft = snippets.filter((s) => s.lane === LaneType.Draft);
-      draft.moveableSnippets = [...draft.snippets];
-      draft.loading = false;
+      draft.currentState.snippets = snippets.filter(
+        (s) => s.lane === LaneType.Snippet
+      );
+      draft.currentState.draft = snippets.filter(
+        (s) => s.lane === LaneType.Draft
+      );
+      draft.currentState.moveableSnippets = [...draft.currentState.snippets];
+      draft.currentState.loading = false;
       return draft;
 
     case SnippetActionType.ADD:
@@ -53,8 +103,8 @@ export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
         id: faker.random.uuid(),
         lane: LaneType.Snippet,
       };
-      draft.snippets.unshift(newSnippet);
-      draft.moveableSnippets.unshift(newSnippet);
+      draft.currentState.snippets.unshift(newSnippet);
+      draft.currentState.moveableSnippets.unshift(newSnippet);
       return draft;
 
     case SnippetActionType.MOVE_TO_NEW_LANE:
@@ -67,23 +117,29 @@ export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
       if (newLane === currentLane) return draft;
 
       if (newLane === LaneType.Draft) {
-        for (const snippet of draft.moveableSnippets) {
+        for (const snippet of draft.currentState.moveableSnippets) {
           if (snippet.id === id) {
             snippet.lane = newLane;
-            draft.draft = [snippet, ...draft.draft];
-            draft.moveableSnippets = deleteSnippetById({
-              snippets: draft.moveableSnippets,
+            draft.currentState.draft = [snippet, ...draft.currentState.draft];
+            draft.currentState.moveableSnippets = deleteSnippetById({
+              snippets: draft.currentState.moveableSnippets,
               id,
             });
             break;
           }
         }
       } else {
-        for (const snippet of draft.draft) {
+        for (const snippet of draft.currentState.draft) {
           if (snippet.id === id) {
             snippet.lane = newLane;
-            draft.moveableSnippets = [snippet, ...draft.moveableSnippets];
-            draft.draft = deleteSnippetById({ snippets: draft.draft, id });
+            draft.currentState.moveableSnippets = [
+              snippet,
+              ...draft.currentState.moveableSnippets,
+            ];
+            draft.currentState.draft = deleteSnippetById({
+              snippets: draft.currentState.draft,
+              id,
+            });
             break;
           }
         }
@@ -95,8 +151,8 @@ export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
         currentId,
         droppedId,
       } = action.payload as SwapSnippetsOrderPayload;
-      draft.draft = swapSnippets({
-        snippets: draft.draft,
+      draft.currentState.draft = swapSnippets({
+        snippets: draft.currentState.draft,
         currentId,
         droppedId,
       });
@@ -104,38 +160,34 @@ export const snippetReducer = (draft: SnippetState, action: SnippetAction) => {
 
     case SnippetActionType.UPDATE:
       const { updatedSnippet } = action.payload as UpdateSnippetPayload;
-      draft.draft = updateSnippetInArray({
-        snippets: draft.draft,
+      draft.currentState.draft = updateSnippetInArray({
+        snippets: draft.currentState.draft,
         updatedSnippet,
       });
-      draft.moveableSnippets = updateSnippetInArray({
-        snippets: draft.moveableSnippets,
+      draft.currentState.moveableSnippets = updateSnippetInArray({
+        snippets: draft.currentState.moveableSnippets,
         updatedSnippet,
       });
-      draft.snippets = updateSnippetInArray({
-        snippets: draft.snippets,
+      draft.currentState.snippets = updateSnippetInArray({
+        snippets: draft.currentState.snippets,
         updatedSnippet,
       });
       return draft;
 
     case SnippetActionType.DELETE:
       const toDeleteId = (action.payload as DeleteSnippetPayload).id;
-      draft.draft = deleteSnippetById({
-        snippets: draft.draft,
+      draft.currentState.draft = deleteSnippetById({
+        snippets: draft.currentState.draft,
         id: toDeleteId,
       });
-      draft.moveableSnippets = deleteSnippetById({
-        snippets: draft.moveableSnippets,
+      draft.currentState.moveableSnippets = deleteSnippetById({
+        snippets: draft.currentState.moveableSnippets,
         id: toDeleteId,
       });
-      draft.snippets = deleteSnippetById({
-        snippets: draft.snippets,
+      draft.currentState.snippets = deleteSnippetById({
+        snippets: draft.currentState.snippets,
         id: toDeleteId,
       });
-      return draft;
-
-    case SnippetActionType.ERROR:
-      draft.error = action.payload as Error;
       return draft;
 
     default:
@@ -205,4 +257,14 @@ export const deleteSnippet = (
   dispatch({
     type: SnippetActionType.DELETE,
     payload,
+  });
+
+export const undo = (dispatch: React.Dispatch<SnippetAction>) =>
+  dispatch({
+    type: SnippetActionType.UNDO,
+  });
+
+export const redo = (dispatch: React.Dispatch<SnippetAction>) =>
+  dispatch({
+    type: SnippetActionType.FORWARD,
   });

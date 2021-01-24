@@ -5,11 +5,13 @@ import {
   addSnippet,
   deleteSnippet,
   hydrateState,
-  initialState,
+  mementoSnippetState,
   moveSnippet,
   raiseFetchSnippetError,
+  redo,
   snippetReducer,
   swapSnippetsOrder,
+  undo,
   updateSnippet,
 } from "./SnippetContext";
 
@@ -22,7 +24,10 @@ type Props = {
 };
 
 export const SnippetContextProvider: FC<Props> = ({ children }) => {
-  const [state, dispatch] = useImmerReducer(snippetReducer, initialState);
+  const [state, dispatch] = useImmerReducer(
+    snippetReducer,
+    mementoSnippetState
+  );
 
   const withDispatch = React.useCallback(
     (method: SnippetContextPublicMethod) => (
@@ -47,6 +52,8 @@ export const SnippetContextProvider: FC<Props> = ({ children }) => {
         swapSnippetsOrder: withDispatch(swapSnippetsOrder),
         deleteSnippet: withDispatch(deleteSnippet),
         updateSnippet: withDispatch(updateSnippet),
+        undo: withDispatch(undo),
+        redo: withDispatch(redo),
       }}
     >
       <SnippetContext.Provider value={state}>

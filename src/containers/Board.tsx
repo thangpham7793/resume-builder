@@ -1,4 +1,4 @@
-import { FaFilePdf, FaFileWord } from "react-icons/fa";
+import { FaFilePdf, FaFileWord, FaRedo, FaUndo } from "react-icons/fa";
 import {
   ISnippet,
   LaneType,
@@ -7,6 +7,7 @@ import {
 } from "../types";
 import React, { DragEventHandler } from "react";
 import {
+  useEditHistory,
   useSnippetContext,
   useSnippetContextDispatch,
 } from "../contexts/SnippetContext";
@@ -20,7 +21,6 @@ import { SnippetForm } from "./SnippetForm";
 import { convertToDoc } from "../services/convertToDoc";
 import faker from "faker";
 import styled from "styled-components";
-import { theme } from "../theme/theme";
 import { useModalContext } from "../contexts/ModalContext";
 import { useTheme } from "../theme/ThemeContext";
 
@@ -40,7 +40,12 @@ const Alert = styled.div`
 
 export const Board = () => {
   const { loading, error, moveableSnippets, draft } = useSnippetContext();
-  const { moveSnippet, swapSnippetsOrder } = useSnippetContextDispatch();
+  const {
+    moveSnippet,
+    swapSnippetsOrder,
+    undo,
+    redo,
+  } = useSnippetContextDispatch();
 
   // factoryFunction for onDrop since it needs the title of the target lane
   const createOnSnippetDroppedHandler = (
@@ -71,17 +76,35 @@ export const Board = () => {
     };
   };
 
-  const { toggleTheme } = useTheme();
+  const { toggleTheme, theme } = useTheme();
   const convertIconsProps = [
     {
       key: faker.random.uuid(),
       icon: () => <FaFileWord fontSize={theme.text.fontSize.xl} />,
       onClick: () => convertToDoc(draft),
+      isDisabled: draft.length === 0,
     },
     {
       key: faker.random.uuid(),
       icon: () => <FaFilePdf fontSize={theme.text.fontSize.xl} />,
       onClick: () => toggleTheme(),
+      isDisabled: draft.length === 0,
+    },
+  ];
+
+  const { canUndo, canRedo } = useEditHistory();
+  const editHistoryIconsProps = [
+    {
+      key: faker.random.uuid(),
+      icon: () => <FaUndo fontSize={theme.text.fontSize.l} />,
+      onClick: () => canUndo && undo(null),
+      isDisabled: !canUndo,
+    },
+    {
+      key: faker.random.uuid(),
+      icon: () => <FaRedo fontSize={theme.text.fontSize.l} />,
+      onClick: () => canRedo && redo(null),
+      isDisabled: !canRedo,
     },
   ];
 
@@ -91,6 +114,7 @@ export const Board = () => {
       key: faker.random.uuid(),
       icon: () => <MdLibraryAdd fontSize={theme.text.fontSize.xl} />,
       onClick: () => openAndSetModalContent(<SnippetForm />),
+      isDisabled: false,
     },
   ];
 
@@ -141,7 +165,7 @@ export const Board = () => {
             key={LaneType.Snippet}
             lane={LaneType.Snippet}
             onDrop={createOnSnippetDroppedHandler(LaneType.Snippet)}
-            icons={renderIcons(addNewIconProps)}
+            actionIcons={renderIcons(addNewIconProps)}
           />
           <Lane
             snippets={
@@ -150,7 +174,8 @@ export const Board = () => {
             key={LaneType.Draft}
             lane={LaneType.Draft}
             onDrop={createOnSnippetDroppedHandler(LaneType.Draft)}
-            icons={renderIcons(convertIconsProps)}
+            actionIcons={renderIcons(convertIconsProps)}
+            editHistoryIcons={renderIcons(editHistoryIconsProps)}
           />
         </>
       )}

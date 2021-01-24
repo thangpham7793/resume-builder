@@ -82,7 +82,7 @@ interface SnippetProps extends ISnippet {
 export const Snippet = ({
   body,
   id,
-  tags = [""],
+  tags,
   onDragStart,
   onClick,
   onDrop,
@@ -93,8 +93,8 @@ export const Snippet = ({
 
   // tags and actions are contained inside snippet, so probably not a good idea to lift them up to Board container.
 
-  const renderTags = (tags: string[]) =>
-    tags.map((tag, i) => <Tag key={i} tag={tag} />);
+  const renderTags = (tags: ISnippet["tags"]) =>
+    tags?.map((tag, i) => <Tag key={i} tag={tag} />);
 
   const { closeModal, openAndSetModalContent } = useModalContext();
 

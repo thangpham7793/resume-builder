@@ -33,7 +33,7 @@ const snippets: ISnippet[] = [
   },
   {
     id: faker.random.uuid(),
-    body: `Thank you for considering my application. I look forward to hearing from you.
+    body: `Thank you for considering my application. I look redo to hearing from you.
     Yours sincerely
     Thang Pham`,
     lane: LaneType.Snippet,

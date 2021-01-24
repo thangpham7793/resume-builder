@@ -8,6 +8,8 @@ export enum SnippetActionType {
   ADD = "ADD",
   DELETE = "DELETE",
   UPDATE = "UPDATE",
+  UNDO = "UNDO",
+  FORWARD = "FORWARD",
 }
 
 export type SnippetMovedPayload = {
@@ -47,10 +49,20 @@ export type SnippetState = {
   draft: ISnippet[];
 };
 
+export type MementoSnippetState = {
+  currentState: SnippetState;
+  history: {
+    stack: SnippetState[];
+    popped: SnippetState[];
+  };
+};
+
 export type SnippetDispatch = {
   addSnippet: (payload: AddSnippetPayload) => void;
   moveSnippet: (payload: SnippetMovedPayload) => void;
   swapSnippetsOrder: (payload: SwapSnippetsOrderPayload) => void;
   updateSnippet: (payload: UpdateSnippetPayload) => void;
   deleteSnippet: (payload: DeleteSnippetPayload) => void;
+  undo: (payload: null) => void;
+  redo: (payload: null) => void;
 };

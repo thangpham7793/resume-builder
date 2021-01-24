@@ -54,11 +54,18 @@ const IconsContainer = styled.div`
 interface LaneProps {
   lane: LaneType;
   onDrop: DragEventHandler;
-  icons: JSX.Element[];
+  actionIcons: JSX.Element[];
+  editHistoryIcons?: JSX.Element[];
   snippets: JSX.Element[] | string;
 }
 
-export const Lane = ({ lane, onDrop, icons, snippets }: LaneProps) => {
+export const Lane = ({
+  lane,
+  onDrop,
+  actionIcons,
+  snippets,
+  editHistoryIcons,
+}: LaneProps) => {
   const onDragOver: DragEventHandler = (event) => {
     if (event.dataTransfer.types.includes(SnippetData.toLowerCase())) {
       event.preventDefault();
@@ -72,7 +79,10 @@ export const Lane = ({ lane, onDrop, icons, snippets }: LaneProps) => {
         <LaneTitle>
           <h3>{lane}</h3>
         </LaneTitle>
-        <IconsContainer>{icons}</IconsContainer>
+        {editHistoryIcons && (
+          <IconsContainer>{editHistoryIcons}</IconsContainer>
+        )}
+        <IconsContainer>{actionIcons}</IconsContainer>
       </LaneTitleWrapper>
       <SnippetsContainer>{snippets}</SnippetsContainer>
     </LaneWrapper>

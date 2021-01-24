@@ -1,12 +1,11 @@
 import { ISnippet, LaneType } from "../types";
 import React, { useState } from "react";
-import {
-  addSnippet,
-  useSnippetContextDispatch,
-} from "../contexts/SnippetContext";
 
 import faker from "faker";
+import { layout } from "../theme/layout";
+import styled from "styled-components";
 import { useModalContext } from "../contexts/ModalContext";
+import { useSnippetContextDispatch } from "../contexts/SnippetContext";
 
 type SnippetFormProps = {
   snippet?: ISnippet;
@@ -17,8 +16,20 @@ const emptySnippet: ISnippet = {
   id: faker.random.uuid(),
   body: "",
   lane: LaneType.Snippet,
-  tags: [""],
+  tags: [],
 };
+
+const FormWrapper = styled.div`
+  ${layout.flexCentered}
+`;
+
+const ButtonsWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  & > div {
+    margin-left: 1rem;
+  }
+`;
 
 export const SnippetForm = ({
   snippet = emptySnippet,
@@ -39,7 +50,7 @@ export const SnippetForm = ({
   };
 
   return (
-    <div>
+    <FormWrapper>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -53,7 +64,7 @@ export const SnippetForm = ({
             onChange={createSetValue("body")}
           />
         </div>
-        <div>
+        <ButtonsWrapper>
           <div
             onClick={() => {
               onConfirmClick
@@ -70,8 +81,8 @@ export const SnippetForm = ({
           <div onClick={closeModal}>
             <button>Cancel</button>
           </div>
-        </div>
+        </ButtonsWrapper>
       </form>
-    </div>
+    </FormWrapper>
   );
 };

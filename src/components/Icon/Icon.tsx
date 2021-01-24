@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 type IconProps = {
   icon: IconType;
+  isDisabled?: boolean;
 };
 
 const IconWrapper = styled.div`
@@ -13,9 +14,9 @@ const IconWrapper = styled.div`
   cursor: pointer;
 `;
 
-export const Icon = ({ icon, ...props }: IconProps) => {
+export const Icon = ({ icon, isDisabled = false, ...props }: IconProps) => {
   const Icon = icon;
-  return (
+  return isDisabled ? null : (
     <IconWrapper {...props}>
       <Icon />
     </IconWrapper>
