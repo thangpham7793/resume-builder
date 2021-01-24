@@ -1,6 +1,7 @@
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 import App from "./containers/App";
+import { ModalContextProvider } from "./contexts/ModalContext";
 import React from "react";
 import ReactDOM from "react-dom";
 import { SnippetContextProvider } from "./contexts/SnippetContextProvider";
@@ -11,7 +12,9 @@ ReactDOM.render(
   <React.StrictMode>
     <ThemeContextProvider>
       <SnippetContextProvider>
-        <App />
+        <ModalContextProvider>
+          <App />
+        </ModalContextProvider>
       </SnippetContextProvider>
     </ThemeContextProvider>
   </React.StrictMode>,

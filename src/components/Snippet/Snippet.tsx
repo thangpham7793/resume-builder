@@ -9,10 +9,9 @@ import { MdDelete, MdModeEdit } from "react-icons/md";
 import React, { DragEventHandler } from "react";
 import { Theme, effect } from "../../theme/theme";
 
-import { Icon } from "../Icon/Icon";
-import { IconType } from "react-icons/lib";
 import { Tag } from "../Tag/Tag";
 import styled from "styled-components";
+import { useModalContext } from "../../contexts/ModalContext";
 import { useSnippetContextDispatch } from "../../contexts/SnippetContext";
 import { useTheme } from "../../theme/ThemeContext";
 
@@ -54,14 +53,6 @@ const SnippetActionWrapper = styled("div")`
   justify-content: space-between;
 `;
 
-const ActionWrapper = styled("div")<{ th: Theme; isDarkMode: boolean }>`
-  &:hover {
-    background: ${(props) => props.th.color.primary.light};
-    border-radius: 50%;
-    border: 1px solid;
-  }
-`;
-
 const SnippetBodyWrapper = styled("div")<{ th: Theme }>`
   width: 100%;
   font-size: ${({ th }) => th.text.fontSize.s};
@@ -87,6 +78,14 @@ interface SnippetProps extends ISnippet {
   onDrop: DragEventHandler;
 }
 
+// updateSnippet({
+//   updatedSnippet: {
+//     id,
+//     tags: ["updated", "success"],
+//     body: "Updated!",
+//     lane,
+//   },
+// }),
 export const Snippet = ({
   body,
   id,
@@ -103,18 +102,15 @@ export const Snippet = ({
   const renderTags = (tags: string[]) =>
     tags.map((tag, i) => <Tag key={i} tag={tag} />);
 
+  const { openModal, setModalContent } = useModalContext();
+
   const actionProps = [
     {
       icon: () => <MdModeEdit />,
-      onClick: () =>
-        updateSnippet({
-          updatedSnippet: {
-            id,
-            tags: ["updated", "success"],
-            body: "Updated!",
-            lane,
-          },
-        }),
+      onClick: () => {
+        openModal();
+        setModalContent(<div>{JSON.stringify({ id, lane, body, tags })}</div>);
+      },
     },
     {
       icon: () => <MdDelete />,

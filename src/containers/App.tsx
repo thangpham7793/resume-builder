@@ -2,8 +2,10 @@ import styled, { createGlobalStyle, css } from "styled-components";
 
 import { Board } from "./Board";
 import { Header } from "../components/Header/Header";
+import Modal from "react-modal";
 import React from "react";
 import { Theme } from "../theme/theme";
+import { useModalContext } from "../contexts/ModalContext";
 import { useTheme } from "../theme/ThemeContext";
 
 type Props = {
@@ -30,8 +32,10 @@ const AppWrapper = styled.div`
   text-align: center;
 `;
 
+Modal.setAppElement("#root");
 function App() {
   const { theme } = useTheme();
+  const { isModalOpen, modalContent } = useModalContext();
   return (
     <>
       <GlobalStyle th={theme} />
@@ -39,6 +43,7 @@ function App() {
         <Header />
         <Board />
       </AppWrapper>
+      <Modal isOpen={isModalOpen}>{modalContent}</Modal>
     </>
   );
 }
