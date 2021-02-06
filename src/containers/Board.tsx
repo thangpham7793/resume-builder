@@ -97,7 +97,6 @@ export const Board = () => {
   const { toggleTheme, theme } = useTheme();
   const convertIconsProps = [
     {
-      key: faker.random.uuid(),
       icon: (
         <ToggleableIcon
           Icon={({ fontSize, color }) => (
@@ -107,10 +106,8 @@ export const Board = () => {
         />
       ),
       onClick: () => convertToDoc(draft),
-      isDisabled: draft.length === 0,
     },
     {
-      key: faker.random.uuid(),
       icon: (
         <ToggleableIcon
           Icon={({ fontSize, color }) => (
@@ -120,14 +117,12 @@ export const Board = () => {
         />
       ),
       onClick: () => toggleTheme(),
-      isDisabled: draft.length === 0,
     },
   ];
 
   const { canUndo, canRedo } = useEditHistory();
   const editHistoryIconsProps = [
     {
-      key: faker.random.uuid(),
       icon: (
         <ToggleableIcon
           Icon={({ fontSize, color }) => (
@@ -138,28 +133,24 @@ export const Board = () => {
         />
       ),
       onClick: () => canUndo && undo(null),
-      isDisabled: !canUndo,
     },
     {
-      key: faker.random.uuid(),
       icon: (
         <ToggleableIcon
           Icon={({ fontSize, color }) => (
             <FaRedo fontSize={fontSize} color={color} />
           )}
           fontSize={theme.text.fontSize.l}
-          isDisabled={draft.length === 0}
+          isDisabled={!canRedo}
         />
       ),
       onClick: () => canRedo && redo(null),
-      isDisabled: !canRedo,
     },
   ];
 
   const { openAndSetModalContent } = useModalContext();
   const addNewIconProps = [
     {
-      key: faker.random.uuid(),
       icon: <MdLibraryAdd fontSize={theme.text.fontSize.xl} />,
       onClick: () => openAndSetModalContent(<SnippetForm />),
       isDisabled: false,
@@ -167,7 +158,7 @@ export const Board = () => {
   ];
 
   const renderIcons = (iconProps: typeof convertIconsProps) =>
-    iconProps.map((props) => <Icon {...props} />);
+    iconProps.map((props) => <Icon key={faker.random.uuid()} {...props} />);
 
   const onDragStart: OnSnippetDraggedHandler = ({ event, id, currentLane }) => {
     // text/plain is treated like a link
