@@ -1,11 +1,14 @@
 import { ISnippet, LaneType } from "../types";
 import React, { useState } from "react";
 
+import { Tag } from "../components/Tag/Tag";
+import { Theme } from "../theme/theme";
 import faker from "faker";
 import { layout } from "../theme/layout";
 import styled from "styled-components";
 import { useModalContext } from "../contexts/ModalContext";
 import { useSnippetContextDispatch } from "../contexts/SnippetContext";
+import { useTheme } from "../theme/ThemeContext";
 
 type SnippetFormProps = {
   snippet?: ISnippet;
@@ -21,6 +24,25 @@ const emptySnippet: ISnippet = {
 
 const FormWrapper = styled.div`
   ${layout.flexCentered}
+  height: 100%;
+`;
+
+const Form = styled.form`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const EditBarWrapper = styled.div``;
+
+const TagsWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column:
+  height: max-content;
+  background: #ddd;
 `;
 
 const ButtonsWrapper = styled.div`
@@ -31,11 +53,26 @@ const ButtonsWrapper = styled.div`
   }
 `;
 
+const TextAreaWrapper = styled("div")<{ th: Theme; isDarkMode: boolean }>`
+  & textarea {
+    resize: none;
+    width: 100%;
+    height: 100%;
+    font-size: ${({ th }) => th.text.fontSize.s};
+    background-color: transparent;
+    border: 0;
+    padding: 0.75rem 0.75rem 0 0.75rem;
+  }
+  height: 60%;
+  display: flex;
+`;
+
 export const SnippetForm = ({
   snippet = emptySnippet,
   onConfirmClick,
 }: SnippetFormProps) => {
   const { closeModal } = useModalContext();
+  const { theme, isDarkMode } = useTheme();
   const [tempSnippet, setTempSnippet] = useState(snippet);
   const { addSnippet } = useSnippetContextDispatch();
 
@@ -45,25 +82,30 @@ export const SnippetForm = ({
 
   const createSetValue = (key: keyof ISnippet) => ({
     target: { value },
-  }: React.ChangeEvent<HTMLInputElement>) => {
+  }: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(key, value);
   };
 
   return (
     <FormWrapper>
-      <form
+      <Form
         onSubmit={(e) => {
           e.preventDefault();
         }}
       >
-        <div>
-          <label>Content</label>
-          <input
-            type="textarea"
+        <EditBarWrapper>Edit Bar</EditBarWrapper>
+        <TextAreaWrapper th={theme} isDarkMode={isDarkMode}>
+          <textarea
+            placeholder="Write something amazing..."
             value={tempSnippet.body}
             onChange={createSetValue("body")}
           />
-        </div>
+        </TextAreaWrapper>
+        <TagsWrapper>
+          {snippet.tags?.map((t) => (
+            <Tag key={t} tag={t} />
+          ))}
+        </TagsWrapper>
         <ButtonsWrapper>
           <div
             onClick={() => {
@@ -82,7 +124,7 @@ export const SnippetForm = ({
             <button>Cancel</button>
           </div>
         </ButtonsWrapper>
-      </form>
+      </Form>
     </FormWrapper>
   );
 };
